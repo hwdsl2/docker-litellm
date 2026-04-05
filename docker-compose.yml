@@ -1,0 +1,14 @@
+services:
+  litellm:
+    image: hwdsl2/litellm-server
+    container_name: litellm
+    env_file:
+      - ./litellm.env
+    restart: always
+    ports:
+      - "4000:4000/tcp"
+    volumes:
+      - litellm-data:/etc/litellm
+
+volumes:
+  litellm-data:
