@@ -1,0 +1,176 @@
+name: proxy_test
+
+on: workflow_call
+
+jobs:
+  proxy_test:
+    runs-on: ubuntu-24.04
+    if: github.repository_owner == 'hwdsl2'
+    strategy:
+      matrix:
+        test_id: [no-env, with-env]
+      fail-fast: false
+    env:
+      TEST_ID: ${{ matrix.test_id }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Test
+        run: |
+          [ ! -x /usr/bin/docker ] && exit 1
+
+          cd "$GITHUB_WORKSPACE"
+          pwd
+          ls -ld litellm.env.example
+
+          sed -i \
+            -e '/LITELLM_LOG_LEVEL=/s/# //' \
+            litellm.env.example
+
+          set -x
+
+          docker build -t litellm-test .
+
+          if [ "$TEST_ID" = "with-env" ]; then
+            docker run \
+              --name "$TEST_ID" \
+              --env-file ./litellm.env.example \
+              --restart=always \
+              -v litellm-test-data:/etc/litellm \
+              -p 4000:4000/tcp \
+              -d litellm-test
+          elif [ "$TEST_ID" = "no-env" ]; then
+            docker run \
+              --name "$TEST_ID" \
+              --restart=always \
+              -v litellm-test-data:/etc/litellm \
+              -p 4000:4000/tcp \
+              -d litellm-test
+          fi
+
+          # Wait for proxy to be ready (up to 120 seconds)
+          i=0
+          while [ "$i" -lt 120 ]; do
+            if docker exec "$TEST_ID" curl -sf http://127.0.0.1:4000/health/liveliness >/dev/null 2>&1; then
+              break
+            fi
+            sleep 1
+            i=$((i + 1))
+          done
+
+          docker ps | grep "$TEST_ID"
+          docker logs "$TEST_ID"
+
+          # Verify proxy health endpoint
+          docker exec "$TEST_ID" curl -sf http://127.0.0.1:4000/health/liveliness
+
+          # Verify persistent data files were created
+          docker exec "$TEST_ID" ls -l /etc/litellm/.master_key
+          docker exec "$TEST_ID" ls -l /etc/litellm/.initialized
+          docker exec "$TEST_ID" ls -l /etc/litellm/config.yaml
+
+          # Verify master key is non-empty and starts with 'sk-'
+          docker exec "$TEST_ID" grep -q '^sk-' /etc/litellm/.master_key
+
+          # Capture master key for API tests
+          MASTER_KEY=$(docker exec "$TEST_ID" cat /etc/litellm/.master_key)
+
+          # Test OpenAI-compatible models endpoint
+          docker exec "$TEST_ID" curl -sf http://127.0.0.1:4000/v1/models \
+            -H "Authorization: Bearer $MASTER_KEY"
+
+          # Test litellm_manage commands
+          docker exec "$TEST_ID" litellm_manage --showkey
+          docker exec "$TEST_ID" litellm_manage --listmodels
+
+          # Test --addmodel: writes to config.yaml and auto-restarts proxy via kill -TERM 1
+          docker exec "$TEST_ID" litellm_manage --addmodel openai/gpt-4o-test --alias ci-test-model || true
+
+          # Wait for shutdown before polling
+          sleep 15
+
+          # Wait for proxy to restart (up to 120 seconds)
+          i=0
+          while [ "$i" -lt 120 ]; do
+            if docker exec "$TEST_ID" curl -sf http://127.0.0.1:4000/health/liveliness >/dev/null 2>&1; then
+              break
+            fi
+            sleep 1
+            i=$((i + 1))
+          done
+
+          docker ps | grep "$TEST_ID"
+          docker logs "$TEST_ID"
+
+          # Verify proxy is healthy after addmodel restart
+          docker exec "$TEST_ID" curl -sf http://127.0.0.1:4000/health/liveliness
+
+          # Verify model was written to config.yaml
+          docker exec "$TEST_ID" grep -q 'ci-test-model' /etc/litellm/config.yaml
+
+          # Retrieve model ID for removal test
+          MODEL_ID=$(docker exec "$TEST_ID" python3 -c \
+            "import yaml; c=yaml.safe_load(open('/etc/litellm/config.yaml')); print(next(m['model_info']['id'] for m in c['model_list'] if m.get('model_name')=='ci-test-model'))")
+          echo "Model ID: $MODEL_ID"
+
+          # List models after add (reads in-memory model list from config)
+          docker exec "$TEST_ID" litellm_manage --listmodels
+
+          # Test --removemodel: removes from config.yaml and auto-restarts proxy
+          docker exec "$TEST_ID" litellm_manage --removemodel "$MODEL_ID" || true
+
+          # Wait for shutdown before polling
+          sleep 15
+
+          # Wait for proxy to restart (up to 120 seconds)
+          i=0
+          while [ "$i" -lt 120 ]; do
+            if docker exec "$TEST_ID" curl -sf http://127.0.0.1:4000/health/liveliness >/dev/null 2>&1; then
+              break
+            fi
+            sleep 1
+            i=$((i + 1))
+          done
+
+          docker ps | grep "$TEST_ID"
+          docker logs "$TEST_ID"
+
+          # Verify proxy is healthy after removemodel restart
+          docker exec "$TEST_ID" curl -sf http://127.0.0.1:4000/health/liveliness
+
+          # Verify model was removed from config.yaml
+          ! docker exec "$TEST_ID" grep -q 'ci-test-model' /etc/litellm/config.yaml
+
+          # Manual restart: test master key persistence
+          docker restart "$TEST_ID"
+
+          # Wait for shutdown before polling
+          sleep 15
+
+          # Wait for proxy to come back (up to 120 seconds)
+          i=0
+          while [ "$i" -lt 120 ]; do
+            if docker exec "$TEST_ID" curl -sf http://127.0.0.1:4000/health/liveliness >/dev/null 2>&1; then
+              break
+            fi
+            sleep 1
+            i=$((i + 1))
+          done
+
+          docker ps | grep "$TEST_ID"
+          docker logs "$TEST_ID"
+
+          # Verify proxy came back healthy
+          docker exec "$TEST_ID" curl -sf http://127.0.0.1:4000/health/liveliness
+
+          # Verify master key persisted across restart
+          docker exec "$TEST_ID" grep -qF "$MASTER_KEY" /etc/litellm/.master_key
+
+          exit 0
+      - name: Clear
+        if: always()
+        run: |
+          docker rm -f "$TEST_ID" || true
+          docker volume rm litellm-test-data || true
+          docker rmi litellm-test || true
