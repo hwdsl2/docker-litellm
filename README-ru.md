@@ -120,12 +120,14 @@ cp litellm.env.example litellm.env
 # Отредактируйте litellm.env и задайте ваши API-ключи, затем:
 docker run \
     --name litellm \
-    --env-file ./litellm.env \
     --restart=always \
     -v litellm-data:/etc/litellm \
+    -v ./litellm.env:/litellm.env:ro \
     -p 4000:4000/tcp \
     -d hwdsl2/litellm-server
 ```
+
+Файл env монтируется в контейнер через bind mount, поэтому изменения применяются при каждом перезапуске контейнера без его пересоздания.
 
 ## Управление моделями
 
@@ -263,13 +265,12 @@ services:
   litellm:
     image: hwdsl2/litellm-server
     container_name: litellm
-    env_file:
-      - ./litellm.env
     restart: always
     ports:
       - "4000:4000/tcp"  # For a host-based reverse proxy, change to "127.0.0.1:4000:4000/tcp"
     volumes:
       - litellm-data:/etc/litellm
+      - ./litellm.env:/litellm.env:ro
 
 volumes:
   litellm-data:

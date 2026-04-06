@@ -120,12 +120,14 @@ cp litellm.env.example litellm.env
 # 编辑 litellm.env 并设置您的 API 密钥，然后：
 docker run \
     --name litellm \
-    --env-file ./litellm.env \
     --restart=always \
     -v litellm-data:/etc/litellm \
+    -v ./litellm.env:/litellm.env:ro \
     -p 4000:4000/tcp \
     -d hwdsl2/litellm-server
 ```
+
+env 文件以绑定挂载方式挂载到容器中，因此每次重启容器时都会读取最新的变量，无需重新创建容器。
 
 ## 模型管理
 
@@ -263,13 +265,12 @@ services:
   litellm:
     image: hwdsl2/litellm-server
     container_name: litellm
-    env_file:
-      - ./litellm.env
     restart: always
     ports:
       - "4000:4000/tcp"  # For a host-based reverse proxy, change to "127.0.0.1:4000:4000/tcp"
     volumes:
       - litellm-data:/etc/litellm
+      - ./litellm.env:/litellm.env:ro
 
 volumes:
   litellm-data:
