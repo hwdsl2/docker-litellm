@@ -265,7 +265,7 @@ do_add_model() {
 
   [ -f "$CONFIG_FILE" ] || exiterr "Config file not found at ${CONFIG_FILE}. Has the container fully started?"
 
-  _MN="$model_alias" _P="$model_provider" \
+  CONFIG_FILE="$CONFIG_FILE" _MN="$model_alias" _P="$model_provider" \
   _AK="${model_key:-}" _AB="${model_base_url:-}" \
   python3 - << 'PYEOF' || exiterr "Failed to update ${CONFIG_FILE}."
 import yaml, uuid, os, sys
@@ -304,7 +304,7 @@ do_remove_model() {
 
   [ -f "$CONFIG_FILE" ] || exiterr "Config file not found at ${CONFIG_FILE}. Has the container fully started?"
 
-  _ID="$model_id" \
+  CONFIG_FILE="$CONFIG_FILE" _ID="$model_id" \
   python3 - << 'PYEOF' || exiterr "Failed to update ${CONFIG_FILE}."
 import yaml, os, sys
 cfg = os.environ.get('CONFIG_FILE', '/etc/litellm/config.yaml')
@@ -349,7 +349,7 @@ do_show_key() {
   echo "==========================================================="
   echo
   echo "Proxy endpoint:  http://${SERVER_ADDR}:${LITELLM_PORT}"
-  echo "API docs:        http://${SERVER_ADDR}:${LITELLM_PORT}/docs"
+  echo "Proxy UI:        http://${SERVER_ADDR}:${LITELLM_PORT}/ui"
   echo
 }
 

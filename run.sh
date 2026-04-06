@@ -331,8 +331,8 @@ if $first_run; then
   echo " ${master_key}"
   echo "==========================================================="
   echo
-  echo "Proxy endpoint:    http://${server_addr}:${LITELLM_PORT}"
-  echo "Proxy UI (beta):   http://${server_addr}:${LITELLM_PORT}/ui"
+  echo "Proxy endpoint: http://${server_addr}:${LITELLM_PORT}"
+  echo "Proxy UI:       http://${server_addr}:${LITELLM_PORT}/ui"
   echo
   echo "To set up HTTPS, see: Using a reverse proxy"
   echo "  https://github.com/hwdsl2/docker-litellm#using-a-reverse-proxy"
