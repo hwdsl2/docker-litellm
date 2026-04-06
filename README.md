@@ -113,7 +113,7 @@ This Docker image uses the following variables, that can be declared in an `env`
 | `LITELLM_OLLAMA_BASE_URL` | Ollama base URL — auto-adds `ollama/llama3.2` | *(not set)* |
 | `LITELLM_DATABASE_URL` | PostgreSQL URL — enables virtual key management | *(not set)* |
 
-**Note:** In your `env` file, DO NOT put `""` or `''` around values, or add spaces around `=`. If you change `LITELLM_PORT`, update the `-p` flag in the `docker run` command accordingly.
+**Note:** In your `env` file, you may enclose values in single quotes, e.g. `VAR='value'`. Do not add spaces around `=`. If you change `LITELLM_PORT`, update the `-p` flag in the `docker run` command accordingly.
 
 Example using an `env` file:
 
@@ -365,3 +365,5 @@ Copyright (C) 2026 Lin Song
 This work is licensed under the [MIT License](https://opensource.org/licenses/MIT).
 
 **LiteLLM** is Copyright (C) 2023 Berri AI, and is distributed under the [MIT License](https://github.com/BerriAI/litellm/blob/main/LICENSE).
+
+This project is an independent Docker setup for LiteLLM and is not affiliated with, endorsed by, or sponsored by Berri AI, the creators of LiteLLM.

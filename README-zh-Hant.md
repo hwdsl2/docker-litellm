@@ -111,7 +111,7 @@ docker image tag quay.io/hwdsl2/litellm-server hwdsl2/litellm-server
 | `LITELLM_OLLAMA_BASE_URL` | Ollama 基礎 URL — 自動新增 `ollama/llama3.2` | *(未設定)* |
 | `LITELLM_DATABASE_URL` | PostgreSQL URL — 啟用虛擬金鑰管理 | *(未設定)* |
 
-**注：** 在 `env` 檔案中，請勿在值周圍加 `""` 或 `''`，也不要在 `=` 兩側新增空格。如果更改了 `LITELLM_PORT`，請相應更新 `docker run` 命令中的 `-p` 參數。
+**注：** 在 `env` 檔案中，可以用單引號括住變數值，例如 `VAR='值'`。不要在 `=` 兩側新增空格。如果更改了 `LITELLM_PORT`，請相應更新 `docker run` 命令中的 `-p` 參數。
 
 使用 `env` 檔案的範例：
 
@@ -351,3 +351,5 @@ docker rm -f litellm
 本作品依據 [MIT 授權條款](https://opensource.org/licenses/MIT)授權。
 
 **LiteLLM** 版權所有 (C) 2023 Berri AI，依照 [MIT 授權條款](https://github.com/BerriAI/litellm/blob/main/LICENSE)分發。
+
+本專案為 LiteLLM 的獨立 Docker 部署方案，與 LiteLLM 的開發者 Berri AI 無任何關聯，亦未獲其認可或贊助。
