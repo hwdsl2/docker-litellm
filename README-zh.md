@@ -63,6 +63,8 @@ curl http://localhost:4000/v1/chat/completions \
   -d '{"model": "gpt-4o", "messages": [{"role": "user", "content": "你好！"}]}'
 ```
 
+**注：** 上述聊天请求命令需要先配置至少一个模型才能使用。请参见[模型管理](#模型管理)。
+
 ## 系统要求
 
 - 安装了 Docker 的 Linux 服务器（本地或云端）
@@ -252,6 +254,25 @@ cp litellm.env.example litellm.env
 # 编辑 litellm.env 并设置您的 API 密钥，然后：
 docker compose up -d
 docker logs litellm
+```
+
+示例 `docker-compose.yml`（已包含在内）：
+
+```yaml
+services:
+  litellm:
+    image: hwdsl2/litellm-server
+    container_name: litellm
+    env_file:
+      - ./litellm.env
+    restart: always
+    ports:
+      - "4000:4000/tcp"  # For a host-based reverse proxy, change to "127.0.0.1:4000:4000/tcp"
+    volumes:
+      - litellm-data:/etc/litellm
+
+volumes:
+  litellm-data:
 ```
 
 **注：** 如需面向互联网的部署，**强烈建议**使用[反向代理](#使用反向代理)来添加 HTTPS。此时，还应将 `docker-compose.yml` 中的 `"4000:4000/tcp"` 改为 `"127.0.0.1:4000:4000/tcp"`，以防止从外部直接访问未加密端口。

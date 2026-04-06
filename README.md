@@ -63,6 +63,8 @@ curl http://localhost:4000/v1/chat/completions \
   -d '{"model": "gpt-4o", "messages": [{"role": "user", "content": "Hello!"}]}'
 ```
 
+**Note:** The chat completion command above requires a model to be configured first. See [Model management](#model-management).
+
 To learn more about how to use this image, read the sections below.
 
 ## Requirements
@@ -258,6 +260,25 @@ docker compose up -d
 docker logs litellm
 ```
 
+Example `docker-compose.yml` (already included):
+
+```yaml
+services:
+  litellm:
+    image: hwdsl2/litellm-server
+    container_name: litellm
+    env_file:
+      - ./litellm.env
+    restart: always
+    ports:
+      - "4000:4000/tcp"  # For a host-based reverse proxy, change to "127.0.0.1:4000:4000/tcp"
+    volumes:
+      - litellm-data:/etc/litellm
+
+volumes:
+  litellm-data:
+```
+
 **Note:** For internet-facing deployments, using a [reverse proxy](#using-a-reverse-proxy) to add HTTPS is **strongly recommended**. In that case, also change `"4000:4000/tcp"` to `"127.0.0.1:4000:4000/tcp"` in `docker-compose.yml`, to prevent direct access to the unencrypted port.
 
 ## Using a reverse proxy
@@ -333,7 +354,7 @@ Your data is preserved in the `litellm-data` volume.
 - Data directory: `/etc/litellm` (Docker volume)
 - Model storage: `config.yaml` inside the volume — created on first start, preserved on restarts
 - Proxy management REST API: runs on the same port as the proxy
-- Built-in UI (beta): available at `http://<server>:<port>/ui`
+- Built-in UI: available at `http://<server>:<port>/ui`
 
 ## License
 

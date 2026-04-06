@@ -63,6 +63,8 @@ curl http://localhost:4000/v1/chat/completions \
   -d '{"model": "gpt-4o", "messages": [{"role": "user", "content": "Привет!"}]}'
 ```
 
+**Примечание:** Команда для отправки запроса на генерацию текста требует, чтобы сначала была настроена хотя бы одна модель. См. раздел [Управление моделями](#управление-моделями).
+
 ## Требования
 
 - Сервер Linux (локальный или облачный) с установленным Docker
@@ -252,6 +254,25 @@ cp litellm.env.example litellm.env
 # Отредактируйте litellm.env и задайте ваши API-ключи, затем:
 docker compose up -d
 docker logs litellm
+```
+
+Пример `docker-compose.yml` (уже включён):
+
+```yaml
+services:
+  litellm:
+    image: hwdsl2/litellm-server
+    container_name: litellm
+    env_file:
+      - ./litellm.env
+    restart: always
+    ports:
+      - "4000:4000/tcp"  # For a host-based reverse proxy, change to "127.0.0.1:4000:4000/tcp"
+    volumes:
+      - litellm-data:/etc/litellm
+
+volumes:
+  litellm-data:
 ```
 
 **Примечание:** Для развёртываний, доступных из интернета, **настоятельно рекомендуется** добавить HTTPS с помощью [обратного прокси](#использование-обратного-прокси). В этом случае также замените `"4000:4000/tcp"` на `"127.0.0.1:4000:4000/tcp"` в файле `docker-compose.yml`, чтобы исключить прямой доступ к незашифрованному порту извне.
