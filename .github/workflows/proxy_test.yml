@@ -35,9 +35,9 @@ jobs:
           if [ "$TEST_ID" = "with-env" ]; then
             docker run \
               --name "$TEST_ID" \
-              --env-file ./litellm.env.example \
               --restart=always \
               -v litellm-test-data:/etc/litellm \
+              -v ./litellm.env.example:/litellm.env:ro \
               -p 4000:4000/tcp \
               -d litellm-test
           elif [ "$TEST_ID" = "no-env" ]; then
