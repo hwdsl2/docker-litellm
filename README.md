@@ -12,6 +12,7 @@ A Docker image to run a [LiteLLM](https://github.com/BerriAI/litellm) AI gateway
 - No database required — models are stored in a plain YAML file on the Docker volume
 - OpenAI-compatible API — point any OpenAI SDK or app at your proxy with a one-line change
 - Supports OpenAI, Anthropic, Groq, Gemini, Ollama, and [100+ other providers](https://docs.litellm.ai/docs/providers)
+- Automatically built and published via [GitHub Actions](https://github.com/hwdsl2/docker-litellm/actions/workflows/main.yml)
 - Persistent data via a Docker volume
 - Multi-arch: `linux/amd64`, `linux/arm64`
 
@@ -31,6 +32,8 @@ docker run \
 ```
 
 On first start, the server automatically generates a master API key and creates a config. The master key is printed to the container logs.
+
+**Note:** For internet-facing deployments, using a [reverse proxy](#using-a-reverse-proxy) to add HTTPS is **strongly recommended**. In that case, also replace `-p 4000:4000/tcp` with `-p 127.0.0.1:4000:4000/tcp` in the `docker run` command above, to prevent direct access to the unencrypted port.
 
 **Step 2.** View the container logs to get the master key:
 
@@ -254,6 +257,8 @@ cp litellm.env.example litellm.env
 docker compose up -d
 docker logs litellm
 ```
+
+**Note:** For internet-facing deployments, using a [reverse proxy](#using-a-reverse-proxy) to add HTTPS is **strongly recommended**. In that case, also change `"4000:4000/tcp"` to `"127.0.0.1:4000:4000/tcp"` in `docker-compose.yml`, to prevent direct access to the unencrypted port.
 
 ## Using a reverse proxy
 

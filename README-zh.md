@@ -12,6 +12,7 @@
 - 无需数据库 — 模型配置以普通 YAML 文件形式存储在 Docker 卷中
 - OpenAI 兼容 API — 只需修改一行配置，即可将任何 OpenAI SDK 或应用程序指向此代理
 - 支持 OpenAI、Anthropic、Groq、Gemini、Ollama 及 [100+ 其他提供商](https://docs.litellm.ai/docs/providers)
+- 通过 [GitHub Actions](https://github.com/hwdsl2/docker-litellm/actions/workflows/main.yml) 自动构建和发布
 - 通过 Docker 卷持久化数据
 - 多架构支持：`linux/amd64`、`linux/arm64`
 
@@ -31,6 +32,8 @@ docker run \
 ```
 
 首次启动时，服务器会自动生成主 API 密钥并创建配置。主密钥会打印到容器日志中。
+
+**注：** 如需面向互联网的部署，**强烈建议**使用[反向代理](#使用反向代理)来添加 HTTPS。此时，还应将上述 `docker run` 命令中的 `-p 4000:4000/tcp` 替换为 `-p 127.0.0.1:4000:4000/tcp`，以防止从外部直接访问未加密端口。
 
 **第二步。** 查看容器日志以获取主密钥：
 
@@ -250,6 +253,8 @@ cp litellm.env.example litellm.env
 docker compose up -d
 docker logs litellm
 ```
+
+**注：** 如需面向互联网的部署，**强烈建议**使用[反向代理](#使用反向代理)来添加 HTTPS。此时，还应将 `docker-compose.yml` 中的 `"4000:4000/tcp"` 改为 `"127.0.0.1:4000:4000/tcp"`，以防止从外部直接访问未加密端口。
 
 ## 使用反向代理
 
