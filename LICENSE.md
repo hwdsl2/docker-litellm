@@ -30,8 +30,3 @@ This Docker image incorporates the following third-party software:
 - Copyright (C) 2023 Berri AI
 - Licensed under the MIT License
 - https://github.com/BerriAI/litellm/blob/main/LICENSE
-
-**Python**
-- Copyright (C) 2001-2025 Python Software Foundation
-- Licensed under the Python Software Foundation License Version 2
-- https://docs.python.org/3/license.html

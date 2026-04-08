@@ -16,7 +16,7 @@ Docker-образ для запуска прокси-шлюза [LiteLLM](https:
 - Постоянное хранение данных через Docker-том
 - Мультиархитектурная поддержка: `linux/amd64`, `linux/arm64`
 
-**Также доступно:** Docker-образы для [WireGuard](https://github.com/hwdsl2/docker-wireguard/blob/main/README-ru.md), [OpenVPN](https://github.com/hwdsl2/docker-openvpn/blob/main/README-ru.md), [IPsec VPN](https://github.com/hwdsl2/docker-ipsec-vpn-server/blob/master/README-ru.md) и [Headscale](https://github.com/hwdsl2/docker-headscale/blob/main/README-ru.md).
+**Также доступно:** Docker-образы для [Whisper](https://github.com/hwdsl2/docker-whisper/blob/main/README-ru.md), [WireGuard](https://github.com/hwdsl2/docker-wireguard/blob/main/README-ru.md), [OpenVPN](https://github.com/hwdsl2/docker-openvpn/blob/main/README-ru.md), [IPsec VPN](https://github.com/hwdsl2/docker-ipsec-vpn-server/blob/master/README-ru.md) и [Headscale](https://github.com/hwdsl2/docker-headscale/blob/main/README-ru.md).
 
 ## Быстрый старт
 

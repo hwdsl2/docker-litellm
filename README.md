@@ -16,7 +16,7 @@ A Docker image to run a [LiteLLM](https://github.com/BerriAI/litellm) AI gateway
 - Persistent data via a Docker volume
 - Multi-arch: `linux/amd64`, `linux/arm64`
 
-**Also available:** Docker images for [WireGuard](https://github.com/hwdsl2/docker-wireguard), [OpenVPN](https://github.com/hwdsl2/docker-openvpn), [IPsec VPN](https://github.com/hwdsl2/docker-ipsec-vpn-server), and [Headscale](https://github.com/hwdsl2/docker-headscale).
+**Also available:** Docker images for [Whisper](https://github.com/hwdsl2/docker-whisper), [WireGuard](https://github.com/hwdsl2/docker-wireguard), [OpenVPN](https://github.com/hwdsl2/docker-openvpn), [IPsec VPN](https://github.com/hwdsl2/docker-ipsec-vpn-server), and [Headscale](https://github.com/hwdsl2/docker-headscale).
 
 ## Quick start
 
