@@ -19,14 +19,14 @@ RUN set -x \
          gcc libffi-dev libssl-dev \
     && python3 -m venv /opt/venv \
     && pip install --no-cache-dir "litellm[proxy]" prisma \
-    && LITELLM_SCHEMA=$(python3 -c 'import litellm, os; print(os.path.join(os.path.dirname(litellm.__file__), "proxy", "schema.prisma"))') \
+    && LITELLM_SCHEMA=$(/opt/venv/bin/python3 -c 'import litellm, os; print(os.path.join(os.path.dirname(litellm.__file__), "proxy", "schema.prisma"))') \
     && DATABASE_URL="postgresql://dummy:dummy@localhost/dummy" \
        prisma generate --schema "$LITELLM_SCHEMA" \
     && apt-get purge -y gcc libffi-dev libssl-dev \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/* \
     && find /opt/venv -name '*.pyi' -delete \
-    && find /opt/venv -type d -name '__pycache__' -exec rm -rf {} + 2>/dev/null || true \
+    && { find /opt/venv -type d -name '__pycache__' -exec rm -rf {} + 2>/dev/null || true; } \
     && mkdir -p /etc/litellm
 
 COPY ./run.sh /opt/src/run.sh

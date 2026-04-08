@@ -152,7 +152,7 @@ if [ -n "$LITELLM_DATABASE_URL" ]; then
   touch "$DB_CONFIGURED_MARKER"
   echo
   echo "Applying database schema..."
-  LITELLM_SCHEMA=$(python3 -c \
+  LITELLM_SCHEMA=$(/opt/venv/bin/python3 -c \
     'import litellm, os; print(os.path.join(os.path.dirname(litellm.__file__), "proxy", "schema.prisma"))')
   if ! prisma db push --schema "$LITELLM_SCHEMA" --skip-generate 2>&1; then
     echo "Warning: Failed to apply database schema. Virtual key management may not work." >&2
