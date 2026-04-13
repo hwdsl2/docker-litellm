@@ -16,7 +16,11 @@
 - 透過 Docker 磁碟區持久化資料
 - 多架構支援：`linux/amd64`、`linux/arm64`
 
-**另提供：** [Whisper](https://github.com/hwdsl2/docker-whisper/blob/main/README-zh-Hant.md)、[WireGuard](https://github.com/hwdsl2/docker-wireguard/blob/main/README-zh-Hant.md)、[OpenVPN](https://github.com/hwdsl2/docker-openvpn/blob/main/README-zh-Hant.md)、[IPsec VPN](https://github.com/hwdsl2/docker-ipsec-vpn-server/blob/master/README-zh-Hant.md) 與 [Headscale](https://github.com/hwdsl2/docker-headscale/blob/main/README-zh-Hant.md) 的 Docker 映像。
+**另提供：**
+- AI/音訊：[Whisper (STT)](https://github.com/hwdsl2/docker-whisper/blob/main/README-zh-Hant.md)、[Kokoro (TTS)](https://github.com/hwdsl2/docker-kokoro/blob/main/README-zh-Hant.md)、[Embeddings](https://github.com/hwdsl2/docker-embeddings/blob/main/README-zh-Hant.md)
+- VPN：[WireGuard](https://github.com/hwdsl2/docker-wireguard/blob/main/README-zh-Hant.md)、[OpenVPN](https://github.com/hwdsl2/docker-openvpn/blob/main/README-zh-Hant.md)、[IPsec VPN](https://github.com/hwdsl2/docker-ipsec-vpn-server/blob/master/README-zh-Hant.md)、[Headscale](https://github.com/hwdsl2/docker-headscale/blob/main/README-zh-Hant.md)
+
+**提示：** Whisper、Kokoro、Embeddings 和 LiteLLM 可以[搭配使用](#與其他-ai-服務搭配使用)，在您自己的伺服器上建立完整的私密 AI 系統。
 
 ## 快速開始
 
@@ -342,6 +346,89 @@ docker rm -f litellm
 ```
 
 您的資料保存在 `litellm-data` 磁碟區中。
+
+## 與其他 AI 服務搭配使用
+
+[Whisper (STT)](https://github.com/hwdsl2/docker-whisper/blob/main/README-zh-Hant.md)、[Embeddings](https://github.com/hwdsl2/docker-embeddings/blob/main/README-zh-Hant.md)、[LiteLLM](https://github.com/hwdsl2/docker-litellm/blob/main/README-zh-Hant.md) 和 [Kokoro (TTS)](https://github.com/hwdsl2/docker-kokoro/blob/main/README-zh-Hant.md) 映像可以組合使用，在您自己的伺服器上建立完整的私密 AI 系統——從語音輸入/輸出到檢索增強生成（RAG）。Whisper、Kokoro 和 Embeddings 完全在本地端執行。當 LiteLLM 僅使用本地端模型（例如 Ollama）時，資料不會傳送給第三方。如果您將 LiteLLM 設定為使用外部提供商（例如 OpenAI、Anthropic），您的資料將被傳送至這些提供商處理。
+
+```mermaid
+graph LR
+    D["📄 文件"] -->|向量化| E["Embeddings<br/>(文字轉向量)"]
+    E -->|儲存| VDB["向量資料庫<br/>(Qdrant, Chroma)"]
+    A["🎤 語音輸入"] -->|轉錄| W["Whisper<br/>(語音轉文字)"]
+    W -->|查詢| E
+    VDB -->|上下文| L["LiteLLM<br/>(AI 閘道)"]
+    W -->|文字| L
+    L -->|回應| T["Kokoro TTS<br/>(文字轉語音)"]
+    T --> B["🔊 語音輸出"]
+```
+
+| 服務 | 功能 | 預設連接埠 |
+|---|---|---|
+| **[Embeddings](https://github.com/hwdsl2/docker-embeddings/blob/main/README-zh-Hant.md)** | 將文字轉換為向量，用於語意搜尋和 RAG | `8000` |
+| **[Whisper (STT)](https://github.com/hwdsl2/docker-whisper/blob/main/README-zh-Hant.md)** | 將語音音訊轉錄為文字 | `9000` |
+| **[LiteLLM](https://github.com/hwdsl2/docker-litellm/blob/main/README-zh-Hant.md)** | AI 閘道——將請求路由至 OpenAI、Anthropic、Ollama 及 100+ 其他提供商 | `4000` |
+| **[Kokoro (TTS)](https://github.com/hwdsl2/docker-kokoro/blob/main/README-zh-Hant.md)** | 將文字轉換為自然語音 | `8880` |
+
+### 語音對話範例
+
+將語音問題轉錄為文字，從大型語言模型取得回答，並轉換為語音輸出：
+
+```bash
+# 步驟 1：將語音音訊轉錄為文字（Whisper）
+TEXT=$(curl -s http://localhost:9000/v1/audio/transcriptions \
+    -F file=@question.mp3 -F model=whisper-1 | jq -r .text)
+
+# 步驟 2：將文字傳送給大型語言模型並取得回應（LiteLLM）
+RESPONSE=$(curl -s http://localhost:4000/v1/chat/completions \
+    -H "Authorization: Bearer <your-litellm-key>" \
+    -H "Content-Type: application/json" \
+    -d "{\"model\":\"gpt-4o\",\"messages\":[{\"role\":\"user\",\"content\":\"$TEXT\"}]}" \
+    | jq -r '.choices[0].message.content')
+
+# 步驟 3：將回應轉換為語音（Kokoro TTS）
+curl -s http://localhost:8880/v1/audio/speech \
+    -H "Content-Type: application/json" \
+    -d "{\"model\":\"tts-1\",\"input\":\"$RESPONSE\",\"voice\":\"af_heart\"}" \
+    --output response.mp3
+```
+
+### RAG 檢索增強生成範例
+
+對文件進行向量化以實現語意檢索，並將檢索到的上下文傳送給大型語言模型進行問答：
+
+```bash
+# 步驟 1：對文件片段進行向量化並存入向量資料庫
+curl -s http://localhost:8000/v1/embeddings \
+    -H "Content-Type: application/json" \
+    -d '{"input": "Docker simplifies deployment by packaging apps in containers.", "model": "text-embedding-ada-002"}' \
+    | jq '.data[0].embedding'
+# → 將返回的向量連同原文一起存入 Qdrant、Chroma、pgvector 等向量資料庫。
+
+# 步驟 2：查詢時，對問題進行向量化並從向量資料庫檢索最相關的文件片段，
+#          然後將問題和檢索到的上下文傳送給 LiteLLM 以取得 LLM 回應。
+curl -s http://localhost:4000/v1/chat/completions \
+    -H "Authorization: Bearer <your-litellm-key>" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "model": "gpt-4o",
+      "messages": [
+        {"role": "system", "content": "請僅根據所提供的上下文進行回答。"},
+        {"role": "user", "content": "Docker 的作用是什麼？\n\n上下文：Docker 通過將應用打包為容器來簡化部署流程。"}
+      ]
+    }' \
+    | jq -r '.choices[0].message.content'
+```
+
+## 技術細節
+
+- 基礎映像：`python:3.12-slim`（Debian）
+- 執行時：Python 3（虛擬環境位於 `/opt/venv`）
+- LiteLLM：來自 PyPI 的最新版 `litellm[proxy]`
+- 資料目錄：`/etc/litellm`（Docker 磁碟區）
+- 模型儲存：磁碟區內的 `config.yaml` —— 首次啟動時建立，重啟後保留
+- 代理管理 REST API：與代理執行在同一連接埠
+- 內建 UI：可透過 `http://<伺服器>:<連接埠>/ui` 存取
 
 ## 授權條款
 

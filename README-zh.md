@@ -16,7 +16,11 @@
 - 通过 Docker 卷持久化数据
 - 多架构支持：`linux/amd64`、`linux/arm64`
 
-**另提供：** [Whisper](https://github.com/hwdsl2/docker-whisper/blob/main/README-zh.md)、[WireGuard](https://github.com/hwdsl2/docker-wireguard/blob/main/README-zh.md)、[OpenVPN](https://github.com/hwdsl2/docker-openvpn/blob/main/README-zh.md)、[IPsec VPN](https://github.com/hwdsl2/docker-ipsec-vpn-server/blob/master/README-zh.md) 和 [Headscale](https://github.com/hwdsl2/docker-headscale/blob/main/README-zh.md) 的 Docker 镜像。
+**另提供：**
+- AI/音频：[Whisper (STT)](https://github.com/hwdsl2/docker-whisper/blob/main/README-zh.md)、[Kokoro (TTS)](https://github.com/hwdsl2/docker-kokoro/blob/main/README-zh.md)、[Embeddings](https://github.com/hwdsl2/docker-embeddings/blob/main/README-zh.md)
+- VPN：[WireGuard](https://github.com/hwdsl2/docker-wireguard/blob/main/README-zh.md)、[OpenVPN](https://github.com/hwdsl2/docker-openvpn/blob/main/README-zh.md)、[IPsec VPN](https://github.com/hwdsl2/docker-ipsec-vpn-server/blob/master/README-zh.md)、[Headscale](https://github.com/hwdsl2/docker-headscale/blob/main/README-zh.md)
+
+**提示：** Whisper、Kokoro、Embeddings 和 LiteLLM 可以[配合使用](#与其他-ai-服务配合使用)，在您自己的服务器上搭建完整的私密 AI 系统。
 
 ## 快速开始
 
@@ -342,6 +346,89 @@ docker rm -f litellm
 ```
 
 您的数据保存在 `litellm-data` 卷中。
+
+## 与其他 AI 服务配合使用
+
+[Whisper (STT)](https://github.com/hwdsl2/docker-whisper/blob/main/README-zh.md)、[Embeddings](https://github.com/hwdsl2/docker-embeddings/blob/main/README-zh.md)、[LiteLLM](https://github.com/hwdsl2/docker-litellm/blob/main/README-zh.md) 和 [Kokoro (TTS)](https://github.com/hwdsl2/docker-kokoro/blob/main/README-zh.md) 镜像可以组合使用，在您自己的服务器上搭建完整的私密 AI 系统——从语音输入/输出到检索增强生成（RAG）。Whisper、Kokoro 和 Embeddings 完全在本地运行。当 LiteLLM 仅使用本地模型（例如 Ollama）时，数据不会发送给第三方。如果您将 LiteLLM 配置为使用外部提供商（例如 OpenAI、Anthropic），您的数据将被发送至这些提供商处理。
+
+```mermaid
+graph LR
+    D["📄 文档"] -->|向量化| E["Embeddings<br/>(文本转向量)"]
+    E -->|存储| VDB["向量数据库<br/>(Qdrant, Chroma)"]
+    A["🎤 语音输入"] -->|转录| W["Whisper<br/>(语音转文本)"]
+    W -->|查询| E
+    VDB -->|上下文| L["LiteLLM<br/>(AI 网关)"]
+    W -->|文本| L
+    L -->|响应| T["Kokoro TTS<br/>(文本转语音)"]
+    T --> B["🔊 语音输出"]
+```
+
+| 服务 | 功能 | 默认端口 |
+|---|---|---|
+| **[Embeddings](https://github.com/hwdsl2/docker-embeddings/blob/main/README-zh.md)** | 将文本转换为向量，用于语义搜索和 RAG | `8000` |
+| **[Whisper (STT)](https://github.com/hwdsl2/docker-whisper/blob/main/README-zh.md)** | 将语音音频转录为文本 | `9000` |
+| **[LiteLLM](https://github.com/hwdsl2/docker-litellm/blob/main/README-zh.md)** | AI 网关——将请求路由至 OpenAI、Anthropic、Ollama 及 100+ 其他提供商 | `4000` |
+| **[Kokoro (TTS)](https://github.com/hwdsl2/docker-kokoro/blob/main/README-zh.md)** | 将文本转换为自然语音 | `8880` |
+
+### 语音对话示例
+
+将语音问题转录为文本，从大型语言模型获取回答，并转换为语音输出：
+
+```bash
+# 第一步：将语音音频转录为文本（Whisper）
+TEXT=$(curl -s http://localhost:9000/v1/audio/transcriptions \
+    -F file=@question.mp3 -F model=whisper-1 | jq -r .text)
+
+# 第二步：将文本发送给大型语言模型并获取响应（LiteLLM）
+RESPONSE=$(curl -s http://localhost:4000/v1/chat/completions \
+    -H "Authorization: Bearer <your-litellm-key>" \
+    -H "Content-Type: application/json" \
+    -d "{\"model\":\"gpt-4o\",\"messages\":[{\"role\":\"user\",\"content\":\"$TEXT\"}]}" \
+    | jq -r '.choices[0].message.content')
+
+# 第三步：将响应转换为语音（Kokoro TTS）
+curl -s http://localhost:8880/v1/audio/speech \
+    -H "Content-Type: application/json" \
+    -d "{\"model\":\"tts-1\",\"input\":\"$RESPONSE\",\"voice\":\"af_heart\"}" \
+    --output response.mp3
+```
+
+### RAG 检索增强生成示例
+
+对文档进行向量化以实现语义检索，并将检索到的上下文发送给大型语言模型进行问答：
+
+```bash
+# 第一步：对文档片段进行向量化并存入向量数据库
+curl -s http://localhost:8000/v1/embeddings \
+    -H "Content-Type: application/json" \
+    -d '{"input": "Docker simplifies deployment by packaging apps in containers.", "model": "text-embedding-ada-002"}' \
+    | jq '.data[0].embedding'
+# → 将返回的向量连同原文一起存入 Qdrant、Chroma、pgvector 等向量数据库。
+
+# 第二步：查询时，对问题进行向量化并从向量数据库检索最相关的文档片段，
+#          然后将问题和检索到的上下文发送给 LiteLLM 以获取 LLM 回答。
+curl -s http://localhost:4000/v1/chat/completions \
+    -H "Authorization: Bearer <your-litellm-key>" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "model": "gpt-4o",
+      "messages": [
+        {"role": "system", "content": "请仅根据所提供的上下文进行回答。"},
+        {"role": "user", "content": "Docker 的作用是什么？\n\n上下文：Docker 通过将应用打包为容器来简化部署流程。"}
+      ]
+    }' \
+    | jq -r '.choices[0].message.content'
+```
+
+## 技术细节
+
+- 基础镜像：`python:3.12-slim`（Debian）
+- 运行时：Python 3（虚拟环境位于 `/opt/venv`）
+- LiteLLM：来自 PyPI 的最新版 `litellm[proxy]`
+- 数据目录：`/etc/litellm`（Docker 数据卷）
+- 模型存储：数据卷内的 `config.yaml` —— 首次启动时创建，重启后保留
+- 代理管理 REST API：与代理运行在同一端口
+- 内置 UI：可通过 `http://<服务器>:<端口>/ui` 访问
 
 ## 授权协议
 

@@ -30,3 +30,8 @@ This Docker image incorporates the following third-party software:
 - Copyright (C) 2023 Berri AI
 - Licensed under the MIT License
 - https://github.com/BerriAI/litellm/blob/main/LICENSE
+
+**Prisma**
+- Copyright (C) 2022 RobertCraigie
+- Licensed under the Apache License 2.0
+- https://github.com/RobertCraigie/prisma-client-py/blob/main/LICENSE
