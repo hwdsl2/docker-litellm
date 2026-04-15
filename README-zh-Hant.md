@@ -6,6 +6,8 @@
 
 執行 [LiteLLM](https://github.com/BerriAI/litellm) AI 閘道代理的 Docker 映像。在 100 個以上大型語言模型（LLM）提供商前面提供統一的 OpenAI 相容 API 端點。基於 Debian (python:3.12-slim)。簡單、私密、可自行託管。
 
+**功能特性：**
+
 - 首次啟動時自動產生主 API 金鑰和設定檔
 - 自動為環境檔案中設定的提供商 API 金鑰新增對應模型
 - 透過輔助腳本（`litellm_manage`）管理模型
@@ -17,6 +19,7 @@
 - 多架構支援：`linux/amd64`、`linux/arm64`
 
 **另提供：**
+
 - AI/音訊：[Whisper (STT)](https://github.com/hwdsl2/docker-whisper/blob/main/README-zh-Hant.md)、[Kokoro (TTS)](https://github.com/hwdsl2/docker-kokoro/blob/main/README-zh-Hant.md)、[Embeddings](https://github.com/hwdsl2/docker-embeddings/blob/main/README-zh-Hant.md)
 - VPN：[WireGuard](https://github.com/hwdsl2/docker-wireguard/blob/main/README-zh-Hant.md)、[OpenVPN](https://github.com/hwdsl2/docker-openvpn/blob/main/README-zh-Hant.md)、[IPsec VPN](https://github.com/hwdsl2/docker-ipsec-vpn-server/blob/master/README-zh-Hant.md)、[Headscale](https://github.com/hwdsl2/docker-headscale/blob/main/README-zh-Hant.md)
 

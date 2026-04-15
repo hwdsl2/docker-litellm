@@ -6,6 +6,8 @@
 
 A Docker image to run a [LiteLLM](https://github.com/BerriAI/litellm) AI gateway proxy. Provides a single OpenAI-compatible API endpoint in front of 100+ LLM providers. Based on Debian (python:3.12-slim). Designed to be simple, private, and self-hosted.
 
+**Features:**
+
 - Automatically generates a master API key and config on first start
 - Auto-adds models for any provider API keys set in the env file
 - Model management via a helper script (`litellm_manage`)
@@ -17,6 +19,7 @@ A Docker image to run a [LiteLLM](https://github.com/BerriAI/litellm) AI gateway
 - Multi-arch: `linux/amd64`, `linux/arm64`
 
 **Also available:**
+
 - AI/Audio: [Whisper (STT)](https://github.com/hwdsl2/docker-whisper), [Kokoro (TTS)](https://github.com/hwdsl2/docker-kokoro), [Embeddings](https://github.com/hwdsl2/docker-embeddings)
 - VPN: [WireGuard](https://github.com/hwdsl2/docker-wireguard), [OpenVPN](https://github.com/hwdsl2/docker-openvpn), [IPsec VPN](https://github.com/hwdsl2/docker-ipsec-vpn-server), [Headscale](https://github.com/hwdsl2/docker-headscale)
 

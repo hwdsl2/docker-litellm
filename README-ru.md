@@ -6,6 +6,8 @@
 
 Docker-образ для запуска прокси-шлюза [LiteLLM](https://github.com/BerriAI/litellm). Обеспечивает единую точку доступа через OpenAI-совместимый API для более чем 100 провайдеров больших языковых моделей (LLM). Основан на Debian (python:3.12-slim). Прост в использовании, приватен и самостоятельно размещаем.
 
+**Возможности:**
+
 - Автоматически генерирует мастер-ключ API и конфигурацию при первом запуске
 - Автоматически добавляет модели для провайдеров, ключи которых заданы в env-файле
 - Управление моделями через вспомогательный скрипт (`litellm_manage`)
@@ -17,6 +19,7 @@ Docker-образ для запуска прокси-шлюза [LiteLLM](https:
 - Мультиархитектурная поддержка: `linux/amd64`, `linux/arm64`
 
 **Также доступно:**
+
 - ИИ/Аудио: [Whisper (STT)](https://github.com/hwdsl2/docker-whisper/blob/main/README-ru.md), [Kokoro (TTS)](https://github.com/hwdsl2/docker-kokoro/blob/main/README-ru.md), [Embeddings](https://github.com/hwdsl2/docker-embeddings/blob/main/README-ru.md)
 - VPN: [WireGuard](https://github.com/hwdsl2/docker-wireguard/blob/main/README-ru.md), [OpenVPN](https://github.com/hwdsl2/docker-openvpn/blob/main/README-ru.md), [IPsec VPN](https://github.com/hwdsl2/docker-ipsec-vpn-server/blob/master/README-ru.md), [Headscale](https://github.com/hwdsl2/docker-headscale/blob/main/README-ru.md)
 
