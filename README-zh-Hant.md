@@ -327,6 +327,8 @@ server {
 
 設定反向代理後，在 `env` 檔案中設定 `LITELLM_HOST=litellm.example.com`，以便在啟動日誌和 `litellm_manage --showkey` 輸出中顯示正確的端點 URL。
 
+自動生成的主 API 金鑰是所有 API 請求所必需的。當伺服器可從公用網際網路存取時，請妥善保管該金鑰。
+
 ## 更新 Docker 映像
 
 要更新 Docker 映像和容器，請先[下載](#下載)最新版本：

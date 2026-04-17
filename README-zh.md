@@ -327,6 +327,8 @@ server {
 
 设置反向代理后，在 `env` 文件中设置 `LITELLM_HOST=litellm.example.com`，以便在启动日志和 `litellm_manage --showkey` 输出中显示正确的端点 URL。
 
+自动生成的主 API 密钥是所有 API 请求所必需的。当服务器可从公网访问时，请妥善保管该密钥。
+
 ## 更新 Docker 镜像
 
 要更新 Docker 镜像和容器，请先[下载](#下载)最新版本：

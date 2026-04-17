@@ -4,7 +4,7 @@
 
 [![Build Status](https://github.com/hwdsl2/docker-litellm/actions/workflows/main.yml/badge.svg)](https://github.com/hwdsl2/docker-litellm/actions/workflows/main.yml) &nbsp;[![License: MIT](docs/images/license.svg)](https://opensource.org/licenses/MIT)
 
-A Docker image to run a [LiteLLM](https://github.com/BerriAI/litellm) AI gateway proxy. Provides a single OpenAI-compatible API endpoint in front of 100+ LLM providers. Based on Debian (python:3.12-slim). Designed to be simple, private, and self-hosted.
+Docker image to run a [LiteLLM](https://github.com/BerriAI/litellm) AI gateway proxy. Provides a single OpenAI-compatible API endpoint in front of 100+ LLM providers. Based on Debian (python:3.12-slim). Designed to be simple, private, and self-hosted.
 
 **Features:**
 
@@ -330,6 +330,8 @@ server {
 ```
 
 After setting up a reverse proxy, set `LITELLM_HOST=litellm.example.com` in your `env` file so that the correct endpoint URL is shown in the startup logs and `litellm_manage --showkey` output.
+
+The auto-generated master API key is required for all API requests. Keep it secure when the server is accessible from the public internet.
 
 ## Update Docker image
 
