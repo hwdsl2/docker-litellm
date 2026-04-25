@@ -375,7 +375,8 @@ graph LR
 | **[LiteLLM](https://github.com/hwdsl2/docker-litellm/blob/main/README-zh.md)** | AI 网关——将请求路由至 OpenAI、Anthropic、Ollama 及 100+ 其他提供商 | `4000` |
 | **[Kokoro (TTS)](https://github.com/hwdsl2/docker-kokoro/blob/main/README-zh.md)** | 将文本转换为自然语音 | `8880` |
 
-### 语音对话示例
+<details>
+<summary><strong>语音对话示例</strong></summary>
 
 将语音问题转录为文本，从大型语言模型获取回答，并转换为语音输出：
 
@@ -398,7 +399,10 @@ curl -s http://localhost:8880/v1/audio/speech \
     --output response.mp3
 ```
 
-### RAG 检索增强生成示例
+</details>
+
+<details>
+<summary><strong>RAG 检索增强生成示例</strong></summary>
 
 对文档进行向量化以实现语义检索，并将检索到的上下文发送给大型语言模型进行问答：
 
@@ -424,6 +428,8 @@ curl -s http://localhost:4000/v1/chat/completions \
     }' \
     | jq -r '.choices[0].message.content'
 ```
+
+</details>
 
 ## 技术细节
 
