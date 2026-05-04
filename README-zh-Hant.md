@@ -8,7 +8,7 @@
 
 **功能特性：**
 
-- 首次啟動時自動產生主 API 金鑰和設定檔
+- **預設安全** — 首次啟動時自動產生主 API 金鑰；所有 API 請求均需此金鑰
 - 自動為環境檔案中設定的提供商 API 金鑰新增對應模型
 - 透過輔助腳本（`litellm_manage`）管理模型
 - 無需資料庫 — 模型設定以純 YAML 檔案形式儲存於 Docker 磁碟區中
@@ -102,7 +102,7 @@ docker image tag quay.io/hwdsl2/litellm-server hwdsl2/litellm-server
 
 ## 環境變數
 
-所有變數均為可選。如未設定，將自動使用安全預設值。
+所有變數均為可選。如未設定 `LITELLM_MASTER_KEY`，主 API 金鑰將在首次啟動時自動產生。
 
 此 Docker 映像使用以下變數，可在 `env` 檔案中宣告（參見[範例](litellm.env.example)）：
 
@@ -288,14 +288,14 @@ volumes:
 
 ## 使用反向代理
 
-對於面向網際網路的部署，您可以在 LiteLLM 代理前面放置反向代理來處理 HTTPS 終止。在本地端或受信任的網路中，代理無需 HTTPS 即可運作，但當 API 端點暴露在網際網路上時，建議使用 HTTPS。
+如需面向公網部署，可在 LiteLLM 前置反向代理處理 HTTPS 終止。在本地或可信網路中使用無需 HTTPS，但將 API 端點暴露在公網時建議啟用 HTTPS。
 
-使用以下其中一個位址，從反向代理存取 LiteLLM 容器：
+從反向代理存取 LiteLLM 容器時使用以下位址之一：
 
-- **`litellm:4000`** — 如果反向代理作為容器執行在與 LiteLLM **相同的 Docker 網路**中（例如定義在同一個 `docker-compose.yml` 中）。Docker 會自動解析容器名稱。
-- **`127.0.0.1:4000`** — 如果反向代理**在主機上**執行，且連接埠 `4000` 已發布（預設的 `docker-compose.yml` 會發布此連接埠）。
+- **`litellm:4000`** — 如果反向代理作為容器執行在與 LiteLLM **同一 Docker 網路**中（例如定義在同一 `docker-compose.yml` 中）。
+- **`127.0.0.1:4000`** — 如果反向代理執行在**主機上**且連接埠 `4000` 已發布（預設 `docker-compose.yml` 會發布該連接埠）。
 
-**使用 [Caddy](https://caddyserver.com/docs/)（[Docker 映像](https://hub.docker.com/_/caddy)）的範例**（透過 Let's Encrypt 自動設定 TLS，反向代理在相同的 Docker 網路中執行）：
+**使用 [Caddy](https://caddyserver.com/docs/)（[Docker 映像檔](https://hub.docker.com/_/caddy)）的範例**（自動 Let's Encrypt TLS，反向代理在同一 Docker 網路中）：
 
 `Caddyfile`：
 ```
@@ -304,25 +304,25 @@ litellm.example.com {
 }
 ```
 
-**使用 nginx 的範例**（反向代理在主機上執行）：
+**使用 nginx 的範例**（反向代理執行在主機上）：
 
 ```nginx
 server {
-  listen 443 ssl;
-  server_name litellm.example.com;
+    listen 443 ssl;
+    server_name litellm.example.com;
 
-  ssl_certificate     /path/to/cert.pem;
-  ssl_certificate_key /path/to/key.pem;
+    ssl_certificate     /path/to/cert.pem;
+    ssl_certificate_key /path/to/key.pem;
 
-  location / {
-    proxy_pass http://127.0.0.1:4000;
-    proxy_set_header Host $host;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
-    proxy_read_timeout 300s;
-    proxy_buffering off;
-  }
+    location / {
+        proxy_pass         http://127.0.0.1:4000;
+        proxy_set_header   Host $host;
+        proxy_set_header   X-Real-IP $remote_addr;
+        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Proto $scheme;
+        proxy_read_timeout 300s;
+        proxy_buffering    off;
+    }
 }
 ```
 

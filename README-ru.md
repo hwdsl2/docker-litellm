@@ -8,7 +8,7 @@ Docker-образ для запуска прокси-шлюза [LiteLLM](https:
 
 **Возможности:**
 
-- Автоматически генерирует мастер-ключ API и конфигурацию при первом запуске
+- **Безопасность по умолчанию** — автоматически генерирует мастер-ключ API при первом запуске; все API-запросы требуют этот ключ
 - Автоматически добавляет модели для провайдеров, ключи которых заданы в env-файле
 - Управление моделями через вспомогательный скрипт (`litellm_manage`)
 - База данных не требуется — модели хранятся в обычном YAML-файле на Docker-томе
@@ -102,7 +102,7 @@ docker image tag quay.io/hwdsl2/litellm-server hwdsl2/litellm-server
 
 ## Переменные окружения
 
-Все переменные необязательны. Если они не заданы, автоматически применяются безопасные значения по умолчанию.
+Все переменные необязательны. Если `LITELLM_MASTER_KEY` не задан, мастер-ключ API автоматически генерируется при первом запуске.
 
 Данный Docker-образ использует следующие переменные, которые можно объявить в файле `env` (см. [пример](litellm.env.example)):
 
@@ -288,12 +288,12 @@ volumes:
 
 ## Использование обратного прокси
 
-Для развёртываний, доступных из интернета, вы можете поставить обратный прокси перед прокси LiteLLM для обработки завершения HTTPS. На локальной или доверенной сети прокси работает без HTTPS, однако HTTPS рекомендуется, когда конечная точка API доступна из интернета.
+Для развёртывания с выходом в интернет разместите обратный прокси перед LiteLLM для обработки HTTPS-терминации. Сервер работает без HTTPS в локальной или доверенной сети, но HTTPS рекомендуется при открытом доступе к API-эндпоинту из интернета.
 
-Для обращения к контейнеру LiteLLM из обратного прокси используйте один из следующих адресов:
+Используйте один из следующих адресов для доступа к контейнеру LiteLLM из обратного прокси:
 
-- **`litellm:4000`** — если обратный прокси работает как контейнер в **той же Docker-сети**, что и LiteLLM (например, определён в одном `docker-compose.yml`). Docker автоматически разрешает имя контейнера.
-- **`127.0.0.1:4000`** — если обратный прокси работает **на хосте**, а порт `4000` опубликован (стандартный `docker-compose.yml` публикует этот порт).
+- **`litellm:4000`** — если ваш обратный прокси работает как контейнер в **той же Docker-сети**, что и LiteLLM (например, определён в том же `docker-compose.yml`).
+- **`127.0.0.1:4000`** — если ваш обратный прокси работает **на хосте** и порт `4000` опубликован (по умолчанию `docker-compose.yml` публикует его).
 
 **Пример с [Caddy](https://caddyserver.com/docs/) ([Docker-образ](https://hub.docker.com/_/caddy))** (автоматический TLS через Let's Encrypt, обратный прокси в той же Docker-сети):
 
@@ -308,21 +308,21 @@ litellm.example.com {
 
 ```nginx
 server {
-  listen 443 ssl;
-  server_name litellm.example.com;
+    listen 443 ssl;
+    server_name litellm.example.com;
 
-  ssl_certificate     /path/to/cert.pem;
-  ssl_certificate_key /path/to/key.pem;
+    ssl_certificate     /path/to/cert.pem;
+    ssl_certificate_key /path/to/key.pem;
 
-  location / {
-    proxy_pass http://127.0.0.1:4000;
-    proxy_set_header Host $host;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
-    proxy_read_timeout 300s;
-    proxy_buffering off;
-  }
+    location / {
+        proxy_pass         http://127.0.0.1:4000;
+        proxy_set_header   Host $host;
+        proxy_set_header   X-Real-IP $remote_addr;
+        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Proto $scheme;
+        proxy_read_timeout 300s;
+        proxy_buffering    off;
+    }
 }
 ```
 

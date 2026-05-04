@@ -8,7 +8,7 @@ Docker image to run a [LiteLLM](https://github.com/BerriAI/litellm) AI gateway p
 
 **Features:**
 
-- Automatically generates a master API key and config on first start
+- **Secure by default** — automatically generates a master API key on first start; all API requests require this key
 - Auto-adds models for any provider API keys set in the env file
 - Model management via a helper script (`litellm_manage`)
 - No database required — models are stored in a plain YAML file on the Docker volume
@@ -104,7 +104,7 @@ Supported platforms: `linux/amd64` and `linux/arm64`.
 
 ## Environment variables
 
-All variables are optional. If not set, secure defaults are used automatically.
+All variables are optional. The master API key is auto-generated on first start if `LITELLM_MASTER_KEY` is not set.
 
 This Docker image uses the following variables, that can be declared in an `env` file (see [example](litellm.env.example)):
 
@@ -292,11 +292,11 @@ volumes:
 
 ## Using a reverse proxy
 
-For internet-facing deployments, you may want to put a reverse proxy in front of the LiteLLM proxy to handle HTTPS termination. The proxy works without HTTPS on a local or trusted network, but HTTPS is recommended when the API endpoint is exposed to the internet.
+For internet-facing deployments, place a reverse proxy in front of LiteLLM to handle HTTPS termination. The server works without HTTPS on a local or trusted network, but HTTPS is recommended when the API endpoint is exposed to the internet.
 
 Use one of the following addresses to reach the LiteLLM container from your reverse proxy:
 
-- **`litellm:4000`** — if your reverse proxy runs as a container in the **same Docker network** as LiteLLM (e.g. defined in the same `docker-compose.yml`). Docker resolves the container name automatically.
+- **`litellm:4000`** — if your reverse proxy runs as a container in the **same Docker network** as LiteLLM (e.g. defined in the same `docker-compose.yml`).
 - **`127.0.0.1:4000`** — if your reverse proxy runs **on the host** and port `4000` is published (the default `docker-compose.yml` publishes it).
 
 **Example with [Caddy](https://caddyserver.com/docs/) ([Docker image](https://hub.docker.com/_/caddy))** (automatic TLS via Let's Encrypt, reverse proxy in the same Docker network):
@@ -312,21 +312,21 @@ litellm.example.com {
 
 ```nginx
 server {
-  listen 443 ssl;
-  server_name litellm.example.com;
+    listen 443 ssl;
+    server_name litellm.example.com;
 
-  ssl_certificate     /path/to/cert.pem;
-  ssl_certificate_key /path/to/key.pem;
+    ssl_certificate     /path/to/cert.pem;
+    ssl_certificate_key /path/to/key.pem;
 
-  location / {
-    proxy_pass http://127.0.0.1:4000;
-    proxy_set_header Host $host;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
-    proxy_read_timeout 300s;
-    proxy_buffering off;
-  }
+    location / {
+        proxy_pass         http://127.0.0.1:4000;
+        proxy_set_header   Host $host;
+        proxy_set_header   X-Real-IP $remote_addr;
+        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Proto $scheme;
+        proxy_read_timeout 300s;
+        proxy_buffering    off;
+    }
 }
 ```
 
