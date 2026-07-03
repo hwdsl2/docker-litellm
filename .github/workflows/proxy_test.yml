@@ -2,6 +2,9 @@ name: proxy_test
 
 on: workflow_call
 
+permissions:
+  contents: read
+
 jobs:
   compose_config:
     runs-on: ubuntu-24.04

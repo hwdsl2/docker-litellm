@@ -12,6 +12,9 @@ on:
       - 'litellm.env.example'
       - 'scripts/**/*.sh'
 
+permissions:
+  contents: read
+
 jobs:
   shellcheck:
     if: github.repository_owner == 'hwdsl2'
