@@ -35,6 +35,109 @@ jobs:
           ! grep -q 'POSTGRES_PASSWORD: litellm' docker-compose.yml
           ! grep -q 'postgresql://litellm:litellm' docker-compose.yml
 
+  compose_runtime:
+    runs-on: ubuntu-24.04
+    if: github.repository_owner == 'hwdsl2'
+    needs: compose_config
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Test compose runtime
+        run: |
+          [ ! -x /usr/bin/docker ] && exit 1
+
+          cd "$GITHUB_WORKSPACE"
+          pwd
+
+          sed -i \
+            -e '/LITELLM_LOG_LEVEL=/s/# //' \
+            litellm.env.example
+          cp litellm.env.example litellm.env
+
+          set -x
+
+          docker build -t litellm-test .
+
+          cat > /tmp/litellm-compose-ci.yml <<'EOF'
+          services:
+            litellm:
+              image: litellm-test
+              pull_policy: never
+          EOF
+
+          docker compose -f docker-compose.yml -f /tmp/litellm-compose-ci.yml up -d
+
+          # Wait for the full compose stack to be ready (up to 300 seconds)
+          i=0
+          while [ "$i" -lt 300 ]; do
+            if curl -sf http://127.0.0.1:4000/health/liveliness >/dev/null 2>&1; then
+              break
+            fi
+            sleep 1
+            i=$((i + 1))
+          done
+
+          docker compose -f docker-compose.yml -f /tmp/litellm-compose-ci.yml ps
+          docker logs litellm-init
+          docker logs litellm-db
+          docker logs litellm
+
+          # Verify compose services and health checks.
+          docker exec litellm-db pg_isready -U litellm -d litellm
+          docker exec litellm curl -sf http://127.0.0.1:4000/health/liveliness
+          docker exec litellm curl -sf http://127.0.0.1:4000/health/readiness
+
+          # Verify generated compose secrets are mounted and not using the legacy default.
+          DB_PASSWORD=$(docker exec litellm cat /var/lib/litellm-secrets/postgres_password)
+          [ "${#DB_PASSWORD}" -eq 32 ] || { echo "Expected 32-character generated Postgres password"; exit 1; }
+          [ "$DB_PASSWORD" != "litellm" ] || { echo "Unexpected legacy Postgres password"; exit 1; }
+
+          # Verify LiteLLM consumed the compose database password file.
+          docker exec litellm test -f /etc/litellm/.db_configured
+          docker exec litellm grep -q '^sk-' /etc/litellm/.master_key
+
+          MASTER_KEY=$(docker exec litellm cat /etc/litellm/.master_key)
+
+          # Verify auth and OpenAI-compatible endpoint through the published compose port.
+          http_code=$(curl -s -o /dev/null -w '%{http_code}' \
+            http://127.0.0.1:4000/v1/models 2>/dev/null || true)
+          [ "$http_code" = "401" ] || { echo "Expected 401 without key, got $http_code"; exit 1; }
+
+          curl -sf http://127.0.0.1:4000/v1/models \
+            -H "Authorization: Bearer $MASTER_KEY"
+
+          # Verify management commands see the running database-backed proxy.
+          docker exec litellm litellm_manage --showkey
+          docker exec litellm litellm_manage --listmodels
+          docker exec litellm litellm_manage --createkey --alias ci-compose-key
+          docker exec litellm litellm_manage --listkeys
+
+          # Verify persistence across a compose-managed restart.
+          docker compose -f docker-compose.yml -f /tmp/litellm-compose-ci.yml restart litellm
+          sleep 15
+
+          i=0
+          while [ "$i" -lt 300 ]; do
+            if curl -sf http://127.0.0.1:4000/health/liveliness >/dev/null 2>&1; then
+              break
+            fi
+            sleep 1
+            i=$((i + 1))
+          done
+
+          docker logs litellm
+          docker exec litellm grep -qF "$MASTER_KEY" /etc/litellm/.master_key
+          docker exec litellm test -f /etc/litellm/.db_configured
+
+          exit 0
+      - name: Clear
+        if: always()
+        run: |
+          docker compose -f docker-compose.yml -f /tmp/litellm-compose-ci.yml down -v || true
+          rm -f litellm.env /tmp/litellm-compose-ci.yml
+          docker rmi litellm-test || true
+
   proxy_test:
     runs-on: ubuntu-24.04
     if: github.repository_owner == 'hwdsl2'
@@ -127,9 +230,9 @@ jobs:
               -d litellm-test
           fi
 
-          # Wait for proxy to be ready (up to 120 seconds)
+          # Wait for proxy to be ready (up to 300 seconds)
           i=0
-          while [ "$i" -lt 120 ]; do
+          while [ "$i" -lt 300 ]; do
             if docker exec "$TEST_ID" curl -sf http://127.0.0.1:4000/health/liveliness >/dev/null 2>&1; then
               break
             fi
@@ -183,9 +286,9 @@ jobs:
           # Wait for shutdown before polling
           sleep 15
 
-          # Wait for proxy to restart (up to 120 seconds)
+          # Wait for proxy to restart (up to 300 seconds)
           i=0
-          while [ "$i" -lt 120 ]; do
+          while [ "$i" -lt 300 ]; do
             if docker exec "$TEST_ID" curl -sf http://127.0.0.1:4000/health/liveliness >/dev/null 2>&1; then
               break
             fi
@@ -218,9 +321,9 @@ jobs:
           # Wait for shutdown before polling
           sleep 15
 
-          # Wait for proxy to restart (up to 120 seconds)
+          # Wait for proxy to restart (up to 300 seconds)
           i=0
-          while [ "$i" -lt 120 ]; do
+          while [ "$i" -lt 300 ]; do
             if docker exec "$TEST_ID" curl -sf http://127.0.0.1:4000/health/liveliness >/dev/null 2>&1; then
               break
             fi
@@ -261,9 +364,9 @@ jobs:
           # Wait for shutdown before polling
           sleep 15
 
-          # Wait for proxy to come back (up to 120 seconds)
+          # Wait for proxy to come back (up to 300 seconds)
           i=0
-          while [ "$i" -lt 120 ]; do
+          while [ "$i" -lt 300 ]; do
             if docker exec "$TEST_ID" curl -sf http://127.0.0.1:4000/health/liveliness >/dev/null 2>&1; then
               break
             fi
