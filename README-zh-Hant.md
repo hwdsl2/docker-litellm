@@ -17,7 +17,7 @@
 - OpenAI 相容代理 API — 只需修改一行設定，即可將 OpenAI SDK 和應用程式工作流程指向此代理
 - 支援 OpenAI、Anthropic、Groq、Gemini、Ollama 及 [100 個以上其他提供商](https://docs.litellm.ai/docs/providers)
 - 支援的端點和欄位取決於 LiteLLM、所選提供商和模型能力
-- 透過 [GitHub Actions](https://github.com/hwdsl2/docker-litellm/actions/workflows/main.yml) 自動建置和發布
+- 透過 [GitHub Actions](https://github.com/hwdsl2/docker-litellm/actions) 自動建置和發布
 - 透過 Docker 磁碟區持久化資料
 - 多架構支援：`linux/amd64`、`linux/arm64`
 

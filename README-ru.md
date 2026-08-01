@@ -17,7 +17,7 @@ Docker-образ для запуска прокси-шлюза [LiteLLM](https:
 - OpenAI-совместимый прокси API — достаточно изменить одну строку, чтобы направить рабочие процессы OpenAI SDK и приложений на этот прокси
 - Поддерживает OpenAI, Anthropic, Groq, Gemini, Ollama и [100+ других провайдеров](https://docs.litellm.ai/docs/providers)
 - Поддерживаемые эндпоинты и поля зависят от LiteLLM, выбранного провайдера и возможностей модели
-- Автоматически собирается и публикуется через [GitHub Actions](https://github.com/hwdsl2/docker-litellm/actions/workflows/main.yml)
+- Автоматически собирается и публикуется через [GitHub Actions](https://github.com/hwdsl2/docker-litellm/actions)
 - Постоянное хранение данных через Docker-том
 - Мультиархитектурная поддержка: `linux/amd64`, `linux/arm64`
 
