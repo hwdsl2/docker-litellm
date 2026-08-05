@@ -64,6 +64,8 @@ jobs:
             litellm:
               image: litellm-test
               pull_policy: never
+              environment:
+                LITELLM_DISABLE_USAGE_COUNTS: "1"
           EOF
 
           docker compose -f docker-compose.yml -f /tmp/litellm-compose-ci.yml up -d
@@ -172,6 +174,7 @@ jobs:
             docker run \
               --name "$TEST_ID" \
               --restart=always \
+              -e LITELLM_DISABLE_USAGE_COUNTS=1 \
               -v litellm-test-data:/etc/litellm \
               -v ./litellm.env.example:/litellm.env:ro \
               -p 4000:4000/tcp \
@@ -180,6 +183,7 @@ jobs:
             docker run \
               --name "$TEST_ID" \
               --restart=always \
+              -e LITELLM_DISABLE_USAGE_COUNTS=1 \
               -v litellm-test-data:/etc/litellm \
               -p 4000:4000/tcp \
               -d litellm-test
@@ -187,6 +191,7 @@ jobs:
             docker run \
               --name "$TEST_ID" \
               --restart=always \
+              -e LITELLM_DISABLE_USAGE_COUNTS=1 \
               -v litellm-test-data:/etc/litellm \
               -e LITELLM_MASTER_KEY=sk-test-master-key \
               -p 4000:4000/tcp \
@@ -195,6 +200,7 @@ jobs:
             docker run \
               --name "$TEST_ID" \
               --restart=always \
+              -e LITELLM_DISABLE_USAGE_COUNTS=1 \
               -v litellm-test-data:/etc/litellm \
               -e LITELLM_MCP_URL=http://127.0.0.1:9999/mcp \
               -e LITELLM_MCP_API_KEY=test-mcp-key \
@@ -204,6 +210,7 @@ jobs:
             docker run \
               --name "$TEST_ID" \
               --restart=always \
+              -e LITELLM_DISABLE_USAGE_COUNTS=1 \
               -v litellm-test-data:/etc/litellm \
               -v litellm-test-litellm-shared:/var/lib/litellm-shared \
               -p 4000:4000/tcp \
@@ -221,6 +228,7 @@ jobs:
             docker run \
               --name "$TEST_ID" \
               --restart=always \
+              -e LITELLM_DISABLE_USAGE_COUNTS=1 \
               -v litellm-test-data:/etc/litellm \
               -v litellm-test-ollama-shared:/var/lib/ollama-shared:ro \
               -v litellm-test-mcp-shared:/var/lib/mcp-shared:ro \
