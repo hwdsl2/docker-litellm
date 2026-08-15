@@ -19,7 +19,7 @@ RUN set -x \
          gcc libffi-dev libssl-dev \
     && python3 -m venv /opt/venv \
     && pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir --uploaded-prior-to P3D "litellm[proxy]" "fastapi<0.140.7" prisma \
+    && pip install --no-cache-dir --uploaded-prior-to P7D "litellm[proxy]" "fastapi<0.140.7" prisma \
     && LITELLM_SCHEMA=$(/opt/venv/bin/python3 -c 'import litellm, os; print(os.path.join(os.path.dirname(litellm.__file__), "proxy", "schema.prisma"))') \
     && DATABASE_URL="postgresql://dummy:dummy@localhost/dummy" \
        prisma generate --schema "$LITELLM_SCHEMA" \
