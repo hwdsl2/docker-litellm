@@ -14,7 +14,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 RUN set -x \
     && apt-get update \
-    && apt-get install -y --no-install-recommends curl wget libatomic1 \
+    && apt-get install -y --no-install-recommends ca-certificates curl wget libatomic1 \
     && apt-get install -y --no-install-recommends \
          gcc libffi-dev libssl-dev \
     && python3 -m venv /opt/venv \

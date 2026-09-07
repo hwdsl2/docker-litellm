@@ -38,6 +38,20 @@ check_ip() {
   printf '%s' "$1" | tr -d '\n' | grep -Eq "$IP_REGEX"
 }
 
+fetch_public_ip() {
+  local ip_addr ip_url
+  for ip_url in https://ipv4.icanhazip.com https://api.ipify.org; do
+    ip_addr=$(wget -t 2 -T 10 -4 --max-redirect=0 -qO- "$ip_url" 2>/dev/null) || continue
+    ip_addr=${ip_addr%$'\r'}
+    [[ "$ip_addr" != *$'\n'* && "$ip_addr" != *$'\r'* ]] || continue
+    if check_ip "$ip_addr"; then
+      printf '%s' "$ip_addr"
+      return 0
+    fi
+  done
+  return 1
+}
+
 check_dns_name() {
   FQDN_REGEX='^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$'
   printf '%s' "$1" | tr -d '\n' | grep -Eq "$FQDN_REGEX"
@@ -247,8 +261,7 @@ printf '%s' "$LITELLM_PORT" > "$PORT_FILE"
 if [ -n "$LITELLM_HOST" ]; then
   server_addr="$LITELLM_HOST"
 else
-  public_ip=$(wget -t 2 -T 10 -qO- http://ipv4.icanhazip.com 2>/dev/null)
-  check_ip "$public_ip" || public_ip=$(wget -t 2 -T 10 -qO- http://ip1.dynupdate.no-ip.com 2>/dev/null)
+  public_ip=$(fetch_public_ip) || public_ip=""
   if check_ip "$public_ip"; then
     server_addr="$public_ip"
   else
