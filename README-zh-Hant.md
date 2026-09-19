@@ -42,7 +42,8 @@ docker run \
 
 首次啟動時，伺服器會自動產生主 API 金鑰並建立設定檔。主金鑰會列印到容器日誌中。
 
-**注：** 如需面向網際網路的部署，**強烈建議**使用[反向代理](#使用反向代理)來新增 HTTPS。此時，還應將上述 `docker run` 命令中的 `-p 4000:4000/tcp` 替換為 `-p 127.0.0.1:4000:4000/tcp`，以防止從外部直接存取未加密連接埠。
+> [!NOTE]
+> 如需面向網際網路的部署，請使用[反向代理](#使用反向代理)來新增 HTTPS。同時，請將上述 `docker run` 命令中的 `-p 4000:4000/tcp` 替換為 `-p 127.0.0.1:4000:4000/tcp`，以防止從外部直接存取未加密連接埠。
 
 **第二步。** 查看容器日誌以取得主金鑰：
 
@@ -60,6 +61,8 @@ docker exec litellm litellm_manage --showkey
 
 **第三步。** 使用 OpenAI 相容請求測試代理：
 
+下方的聊天請求命令需要先設定至少一個模型才能使用。請參見[模型管理](#模型管理)。
+
 ```bash
 # 列出可用模型
 curl http://localhost:4000/v1/models \
@@ -71,8 +74,6 @@ curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{"model": "gpt-4o", "messages": [{"role": "user", "content": "你好！"}]}'
 ```
-
-**注：** 上述聊天請求命令需要先設定至少一個模型才能使用。請參見[模型管理](#模型管理)。
 
 ## 社群
 
@@ -164,7 +165,8 @@ env 檔案以綁定掛載方式掛載到容器中，因此每次重新啟動容�
 
 使用 `docker exec` 透過 `litellm_manage` 輔助腳本管理模型。模型儲存在 Docker 磁碟區內的 `config.yaml` 中，容器重新啟動後仍然保留。
 
-**注：** `--addmodel` 和 `--removemodel` 會寫入 `config.yaml` 並自動重新啟動代理以套用變更。
+> [!NOTE]
+> `--addmodel` 和 `--removemodel` 會寫入 `config.yaml` 並自動重新啟動代理以套用變更。
 
 設定 `LITELLM_OLLAMA_BASE_URL` 後，容器會在 `config.yaml` 中保持兩個預設 Ollama 別名：`ollama/llama3.2:3b` 用於向後相容，`ollama-chat/llama3.2:3b` 用於 Ollama 原生聊天行為。需要串流工具呼叫時，請使用 `ollama-chat/...` 別名。
 
@@ -258,7 +260,8 @@ docker exec litellm litellm_manage --addmcp my-gateway http://mcp:3000/mcp --key
 docker exec litellm litellm_manage --removemcp my-gateway
 ```
 
-**注：** `--addmcp` 和 `--removemcp` 會寫入 `config.yaml` 並自動重新啟動代理。透過 `LITELLM_MCP_URL` 新增的 MCP 伺服器在設定中命名為 `docker_mcp_gateway`，可使用 `--removemcp docker_mcp_gateway` 進行管理。
+> [!NOTE]
+> `--addmcp` 和 `--removemcp` 會寫入 `config.yaml` 並自動重新啟動代理。透過 `LITELLM_MCP_URL` 新增的 MCP 伺服器在設定中命名為 `docker_mcp_gateway`，可使用 `--removemcp docker_mcp_gateway` 進行管理。
 
 ## 虛擬金鑰管理
 
@@ -404,7 +407,8 @@ volumes:
     name: litellm-db
 ```
 
-**注：** 如需面向網際網路的部署，**強烈建議**使用[反向代理](#使用反向代理)來新增 HTTPS。此時，還應將 `docker-compose.yml` 中的 `"4000:4000/tcp"` 改為 `"127.0.0.1:4000:4000/tcp"`，以防止從外部直接存取未加密連接埠。
+> [!NOTE]
+> 如需面向網際網路的部署，請使用[反向代理](#使用反向代理)來新增 HTTPS。同時，請將 `docker-compose.yml` 中的 `"4000:4000/tcp"` 改為 `"127.0.0.1:4000:4000/tcp"`，以防止從外部直接存取未加密連接埠。
 
 ## 使用反向代理
 

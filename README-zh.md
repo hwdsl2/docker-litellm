@@ -42,7 +42,8 @@ docker run \
 
 首次启动时，服务器会自动生成主 API 密钥并创建配置。主密钥会打印到容器日志中。
 
-**注：** 如需面向互联网的部署，**强烈建议**使用[反向代理](#使用反向代理)来添加 HTTPS。此时，还应将上述 `docker run` 命令中的 `-p 4000:4000/tcp` 替换为 `-p 127.0.0.1:4000:4000/tcp`，以防止从外部直接访问未加密端口。
+> [!NOTE]
+> 如需面向互联网的部署，请使用[反向代理](#使用反向代理)来添加 HTTPS。同时，请将上述 `docker run` 命令中的 `-p 4000:4000/tcp` 替换为 `-p 127.0.0.1:4000:4000/tcp`，以防止从外部直接访问未加密端口。
 
 **第二步。** 查看容器日志以获取主密钥：
 
@@ -60,6 +61,8 @@ docker exec litellm litellm_manage --showkey
 
 **第三步。** 使用 OpenAI 兼容请求测试代理：
 
+下面的聊天请求命令需要先配置至少一个模型才能使用。请参见[模型管理](#模型管理)。
+
 ```bash
 # 列出可用模型
 curl http://localhost:4000/v1/models \
@@ -71,8 +74,6 @@ curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{"model": "gpt-4o", "messages": [{"role": "user", "content": "你好！"}]}'
 ```
-
-**注：** 上述聊天请求命令需要先配置至少一个模型才能使用。请参见[模型管理](#模型管理)。
 
 ## 社区
 
@@ -164,7 +165,8 @@ env 文件以绑定挂载方式挂载到容器中，因此每次重启容器时�
 
 使用 `docker exec` 通过 `litellm_manage` 辅助脚本管理模型。模型存储在 Docker 卷内的 `config.yaml` 中，容器重启后仍然保留。
 
-**注：** `--addmodel` 和 `--removemodel` 会写入 `config.yaml` 并自动重启代理以应用更改。
+> [!NOTE]
+> `--addmodel` 和 `--removemodel` 会写入 `config.yaml` 并自动重启代理以应用更改。
 
 设置 `LITELLM_OLLAMA_BASE_URL` 后，容器会在 `config.yaml` 中保持两个默认 Ollama 别名：`ollama/llama3.2:3b` 用于向后兼容，`ollama-chat/llama3.2:3b` 用于 Ollama 原生聊天行为。需要流式工具调用时，请使用 `ollama-chat/...` 别名。
 
@@ -258,7 +260,8 @@ docker exec litellm litellm_manage --addmcp my-gateway http://mcp:3000/mcp --key
 docker exec litellm litellm_manage --removemcp my-gateway
 ```
 
-**注：** `--addmcp` 和 `--removemcp` 会写入 `config.yaml` 并自动重启代理。通过 `LITELLM_MCP_URL` 添加的 MCP 服务器在配置中命名为 `docker_mcp_gateway`，可使用 `--removemcp docker_mcp_gateway` 进行管理。
+> [!NOTE]
+> `--addmcp` 和 `--removemcp` 会写入 `config.yaml` 并自动重启代理。通过 `LITELLM_MCP_URL` 添加的 MCP 服务器在配置中命名为 `docker_mcp_gateway`，可使用 `--removemcp docker_mcp_gateway` 进行管理。
 
 ## 虚拟密钥管理
 
@@ -404,7 +407,8 @@ volumes:
     name: litellm-db
 ```
 
-**注：** 如需面向互联网的部署，**强烈建议**使用[反向代理](#使用反向代理)来添加 HTTPS。此时，还应将 `docker-compose.yml` 中的 `"4000:4000/tcp"` 改为 `"127.0.0.1:4000:4000/tcp"`，以防止从外部直接访问未加密端口。
+> [!NOTE]
+> 如需面向互联网的部署，请使用[反向代理](#使用反向代理)来添加 HTTPS。同时，请将 `docker-compose.yml` 中的 `"4000:4000/tcp"` 改为 `"127.0.0.1:4000:4000/tcp"`，以防止从外部直接访问未加密端口。
 
 ## 使用反向代理
 

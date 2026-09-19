@@ -42,7 +42,8 @@ docker run \
 
 On first start, the server automatically generates a master API key and creates a config. The master key is printed to the container logs.
 
-**Note:** For internet-facing deployments, using a [reverse proxy](#using-a-reverse-proxy) to add HTTPS is **strongly recommended**. In that case, also replace `-p 4000:4000/tcp` with `-p 127.0.0.1:4000:4000/tcp` in the `docker run` command above, to prevent direct access to the unencrypted port.
+> [!NOTE]
+> For internet-facing deployments, use a [reverse proxy](#using-a-reverse-proxy) to add HTTPS. Also replace `-p 4000:4000/tcp` with `-p 127.0.0.1:4000:4000/tcp` in the `docker run` command above, to prevent direct access to the unencrypted port.
 
 **Step 2.** View the container logs to get the master key:
 
@@ -60,6 +61,8 @@ docker exec litellm litellm_manage --showkey
 
 **Step 3.** Test the proxy with an OpenAI-compatible request:
 
+The chat completion command below requires a model to be configured first. See [Model management](#model-management).
+
 ```bash
 # List available models
 curl http://localhost:4000/v1/models \
@@ -71,8 +74,6 @@ curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{"model": "gpt-4o", "messages": [{"role": "user", "content": "Hello!"}]}'
 ```
-
-**Note:** The chat completion command above requires a model to be configured first. See [Model management](#model-management).
 
 To learn more about how to use this image, read the sections below.
 
@@ -166,7 +167,8 @@ The env file is bind-mounted into the container, so changes are picked up on eve
 
 Use `docker exec` to manage models with the `litellm_manage` helper script. Models are stored in `config.yaml` inside the Docker volume and persist across container restarts.
 
-**Note:** `--addmodel` and `--removemodel` write to `config.yaml` and automatically restart the proxy to apply the change.
+> [!NOTE]
+> `--addmodel` and `--removemodel` write to `config.yaml` and automatically restart the proxy to apply the change.
 
 When `LITELLM_OLLAMA_BASE_URL` is set, the container keeps both default Ollama aliases in `config.yaml`: `ollama/llama3.2:3b` for backward compatibility and `ollama-chat/llama3.2:3b` for chat-native Ollama behavior. Use the `ollama-chat/...` alias for streaming tool calls.
 
@@ -260,7 +262,8 @@ docker exec litellm litellm_manage --addmcp my-gateway http://mcp:3000/mcp --key
 docker exec litellm litellm_manage --removemcp my-gateway
 ```
 
-**Note:** `--addmcp` and `--removemcp` write to `config.yaml` and automatically restart the proxy. MCP servers added via `LITELLM_MCP_URL` are named `docker_mcp_gateway` in the config and can be managed with `--removemcp docker_mcp_gateway`.
+> [!NOTE]
+> `--addmcp` and `--removemcp` write to `config.yaml` and automatically restart the proxy. MCP servers added via `LITELLM_MCP_URL` are named `docker_mcp_gateway` in the config and can be managed with `--removemcp docker_mcp_gateway`.
 
 ## Virtual key management
 
@@ -408,7 +411,8 @@ volumes:
     name: litellm-db
 ```
 
-**Note:** For internet-facing deployments, using a [reverse proxy](#using-a-reverse-proxy) to add HTTPS is **strongly recommended**. In that case, also change `"4000:4000/tcp"` to `"127.0.0.1:4000:4000/tcp"` in `docker-compose.yml`, to prevent direct access to the unencrypted port.
+> [!NOTE]
+> For internet-facing deployments, use a [reverse proxy](#using-a-reverse-proxy) to add HTTPS. Also change `"4000:4000/tcp"` to `"127.0.0.1:4000:4000/tcp"` in `docker-compose.yml`, to prevent direct access to the unencrypted port.
 
 ## Using a reverse proxy
 
