@@ -4,22 +4,19 @@
 
 [![Build Status](https://github.com/hwdsl2/docker-litellm/actions/workflows/main.yml/badge.svg)](https://github.com/hwdsl2/docker-litellm/actions/workflows/main.yml) &nbsp;[![Docker Pulls](https://raw.githubusercontent.com/hwdsl2/badges/main/img/docker-pulls-litellm-server.svg)](https://hub.docker.com/r/hwdsl2/litellm-server) &nbsp;[![License: MIT](docs/images/license.svg)](https://opensource.org/licenses/MIT)
 
-[Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-zh-Hant.md) 的一部分 ─ 一條命令部署完整的自託管 AI 技術棧。
-
 執行 [LiteLLM](https://github.com/BerriAI/litellm) AI 閘道代理的 Docker 映像。在 100 個以上大型語言模型（LLM）提供商前面提供統一的 OpenAI 相容 API 端點。基於 Debian (python:3.12-slim)。簡單、私密、可自行託管。
 
 **功能特性：**
 
-- **預設安全** — 首次啟動時自動產生主 API 金鑰；所有 API 請求均需此金鑰
-- 自動為環境檔案中設定的提供商 API 金鑰新增對應模型
-- 透過輔助腳本（`litellm_manage`）管理模型
-- `docker-compose.yml` 包含用於管理介面、虛擬金鑰管理和支出追蹤的 PostgreSQL 資料庫
-- OpenAI 相容代理 API — 只需修改一行設定，即可將 OpenAI SDK 和應用程式工作流程指向此代理
-- 支援 OpenAI、Anthropic、Groq、Gemini、Ollama 及 [100 個以上其他提供商](https://docs.litellm.ai/docs/providers)
-- 支援的端點和欄位取決於 LiteLLM、所選提供商和模型能力
-- 透過 [GitHub Actions](https://github.com/hwdsl2/docker-litellm/actions) 自動建置和發布
-- 透過 Docker 磁碟區持久化資料
-- 多架構支援：`linux/amd64`、`linux/arm64`
+- **預設安全：** 首次啟動時自動產生主 API 金鑰；所有 API 請求均需此金鑰
+- **相容 OpenAI 的 API：** 將相容的 OpenAI SDK 與應用程式連接到代理。支援的端點與欄位取決於 LiteLLM、所選提供商與模型能力。
+- **提供商選擇：** 支援 OpenAI、Anthropic、Groq、Gemini、Ollama 及 [100 個以上其他提供商](https://docs.litellm.ai/docs/providers)
+- **自動設定模型：** 自動為環境檔案中設定的提供商 API 金鑰新增對應模型
+- **管理介面與用量追蹤：** `docker-compose.yml` 包含用於管理介面、虛擬金鑰管理和支出追蹤的 PostgreSQL 資料庫
+- **模型管理：** 透過輔助腳本（`litellm_manage`）管理模型
+- **自動建置：** 透過 [GitHub Actions](https://github.com/hwdsl2/docker-litellm/actions) 自動建置和發布
+
+也可作為 [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-zh-Hant.md) 的一部分使用，一條命令即可部署完整的自託管 AI 技術堆疊。
 
 > 📘 [The Self-Hosted AI Builder’s Guide](https://books2read.com/aiguide?store=amazon) 是一本關於建置、保護和維運自己的私有 AI 技術堆疊的實用指南。
 

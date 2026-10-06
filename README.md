@@ -4,22 +4,19 @@
 
 [![Build Status](https://github.com/hwdsl2/docker-litellm/actions/workflows/main.yml/badge.svg)](https://github.com/hwdsl2/docker-litellm/actions/workflows/main.yml) &nbsp;[![Docker Pulls](https://raw.githubusercontent.com/hwdsl2/badges/main/img/docker-pulls-litellm-server.svg)](https://hub.docker.com/r/hwdsl2/litellm-server) &nbsp;[![License: MIT](docs/images/license.svg)](https://opensource.org/licenses/MIT)
 
-Part of the [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack) — deploy a complete self-hosted AI stack with a single command.
-
 Docker image to run a [LiteLLM](https://github.com/BerriAI/litellm) AI gateway proxy. Provides a single OpenAI-compatible API endpoint in front of 100+ LLM providers. Based on Debian (python:3.12-slim). Designed to be simple, private, and self-hosted.
 
 **Features:**
 
-- **Secure by default** — automatically generates a master API key on first start; all API requests require this key
-- Auto-adds models for any provider API keys set in the env file
-- Model management via a helper script (`litellm_manage`)
-- The `docker-compose.yml` includes a PostgreSQL database for the Admin UI, virtual key management, and spend tracking
-- OpenAI-compatible proxy API — point OpenAI SDK and app workflows at your proxy with a one-line change
-- Supports OpenAI, Anthropic, Groq, Gemini, Ollama, and [100+ other providers](https://docs.litellm.ai/docs/providers)
-- Supported endpoints and fields depend on LiteLLM, the selected provider, and model capabilities
-- Automatically built and published via [GitHub Actions](https://github.com/hwdsl2/docker-litellm/actions)
-- Persistent data via a Docker volume
-- Multi-arch: `linux/amd64`, `linux/arm64`
+- **Secure by default:** automatically generates a master API key on first start; all API requests require this key.
+- **OpenAI-compatible API:** connect compatible OpenAI SDKs and apps to your proxy. Supported endpoints and fields depend on LiteLLM, the selected provider, and model capabilities.
+- **Provider choice:** supports OpenAI, Anthropic, Groq, Gemini, Ollama, and [100+ other providers](https://docs.litellm.ai/docs/providers).
+- **Automatic model configuration:** adds models for provider API keys set in the env file.
+- **Admin UI and usage tracking:** `docker-compose.yml` includes PostgreSQL for the Admin UI, virtual key management, and spend tracking.
+- **Model management:** via a helper script (`litellm_manage`).
+- **Automated builds:** images are automatically built and published through [GitHub Actions](https://github.com/hwdsl2/docker-litellm/actions).
+
+Also available as part of the [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack), which deploys a complete self-hosted AI stack with a single command.
 
 > 📘 [The Self-Hosted AI Builder’s Guide](https://books2read.com/aiguide?store=amazon) is a practical guide to building, securing, and operating your own private AI stack.
 

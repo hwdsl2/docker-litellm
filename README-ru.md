@@ -4,22 +4,19 @@
 
 [![Build Status](https://github.com/hwdsl2/docker-litellm/actions/workflows/main.yml/badge.svg)](https://github.com/hwdsl2/docker-litellm/actions/workflows/main.yml) &nbsp;[![Docker Pulls](https://raw.githubusercontent.com/hwdsl2/badges/main/img/docker-pulls-litellm-server.svg)](https://hub.docker.com/r/hwdsl2/litellm-server) &nbsp;[![License: MIT](docs/images/license.svg)](https://opensource.org/licenses/MIT)
 
-Часть [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-ru.md) — разверните полный самостоятельно размещённый AI-стек одной командой.
-
 Docker-образ для запуска прокси-шлюза [LiteLLM](https://github.com/BerriAI/litellm). Обеспечивает единую точку доступа через OpenAI-совместимый API для более чем 100 провайдеров больших языковых моделей (LLM). Основан на Debian (python:3.12-slim). Прост в использовании, приватен и самостоятельно размещаем.
 
 **Возможности:**
 
-- **Безопасность по умолчанию** — автоматически генерирует мастер-ключ API при первом запуске; все API-запросы требуют этот ключ
-- Автоматически добавляет модели для провайдеров, ключи которых заданы в env-файле
-- Управление моделями через вспомогательный скрипт (`litellm_manage`)
-- `docker-compose.yml` включает базу данных PostgreSQL для панели администратора, управления виртуальными ключами и отслеживания расходов
-- OpenAI-совместимый прокси API — достаточно изменить одну строку, чтобы направить рабочие процессы OpenAI SDK и приложений на этот прокси
-- Поддерживает OpenAI, Anthropic, Groq, Gemini, Ollama и [100+ других провайдеров](https://docs.litellm.ai/docs/providers)
-- Поддерживаемые эндпоинты и поля зависят от LiteLLM, выбранного провайдера и возможностей модели
-- Автоматически собирается и публикуется через [GitHub Actions](https://github.com/hwdsl2/docker-litellm/actions)
-- Постоянное хранение данных через Docker-том
-- Мультиархитектурная поддержка: `linux/amd64`, `linux/arm64`
+- **Безопасность по умолчанию:** автоматически генерирует мастер-ключ API при первом запуске; все API-запросы требуют этот ключ
+- **Совместимый с OpenAI API:** подключайте совместимые OpenAI SDK и приложения к прокси. Поддерживаемые конечные точки и поля зависят от LiteLLM, выбранного провайдера и возможностей модели.
+- **Выбор провайдера:** Поддерживает OpenAI, Anthropic, Groq, Gemini, Ollama и [100+ других провайдеров](https://docs.litellm.ai/docs/providers)
+- **Автоматическая настройка моделей:** Автоматически добавляет модели для провайдеров, ключи которых заданы в env-файле
+- **Панель управления и учёт расходов:** `docker-compose.yml` включает базу данных PostgreSQL для панели администратора, управления виртуальными ключами и отслеживания расходов
+- **Управление моделями:** через вспомогательный скрипт (`litellm_manage`)
+- **Автоматическая сборка:** образы автоматически собираются и публикуются через [GitHub Actions](https://github.com/hwdsl2/docker-litellm/actions).
+
+Также доступен в составе [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-ru.md), который развёртывает полный AI-стек на собственном сервере одной командой.
 
 > 📘 [The Self-Hosted AI Builder’s Guide](https://books2read.com/aiguide?store=amazon): практическое руководство по созданию, защите и эксплуатации собственного приватного ИИ-стека.
 

@@ -4,22 +4,19 @@
 
 [![Build Status](https://github.com/hwdsl2/docker-litellm/actions/workflows/main.yml/badge.svg)](https://github.com/hwdsl2/docker-litellm/actions/workflows/main.yml) &nbsp;[![Docker Pulls](https://raw.githubusercontent.com/hwdsl2/badges/main/img/docker-pulls-litellm-server.svg)](https://hub.docker.com/r/hwdsl2/litellm-server) &nbsp;[![License: MIT](docs/images/license.svg)](https://opensource.org/licenses/MIT)
 
-[Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-zh.md) 的一部分 ─ 一条命令部署完整的自托管 AI 技术栈。
-
 运行 [LiteLLM](https://github.com/BerriAI/litellm) AI 网关代理的 Docker 镜像。在 100+ 个大型语言模型（LLM）提供商前面提供统一的 OpenAI 兼容 API 端点。基于 Debian (python:3.12-slim)。简单、私密、可自托管。
 
 **功能特性：**
 
-- **默认安全** — 首次启动时自动生成主 API 密钥；所有 API 请求均需此密钥
-- 自动为环境文件中设置的提供商 API 密钥添加对应模型
-- 通过辅助脚本（`litellm_manage`）管理模型
-- `docker-compose.yml` 包含用于管理界面、虚拟密钥管理和支出追踪的 PostgreSQL 数据库
-- OpenAI 兼容代理 API — 只需修改一行配置，即可将 OpenAI SDK 和应用工作流指向此代理
-- 支持 OpenAI、Anthropic、Groq、Gemini、Ollama 及 [100+ 其他提供商](https://docs.litellm.ai/docs/providers)
-- 支持的端点和字段取决于 LiteLLM、所选提供商和模型能力
-- 通过 [GitHub Actions](https://github.com/hwdsl2/docker-litellm/actions) 自动构建和发布
-- 通过 Docker 卷持久化数据
-- 多架构支持：`linux/amd64`、`linux/arm64`
+- **默认安全：** 首次启动时自动生成主 API 密钥；所有 API 请求均需此密钥
+- **兼容 OpenAI 的 API：** 将兼容的 OpenAI SDK 和应用连接到代理。支持的端点和字段取决于 LiteLLM、所选提供商和模型能力。
+- **提供商选择：** 支持 OpenAI、Anthropic、Groq、Gemini、Ollama 及 [100+ 其他提供商](https://docs.litellm.ai/docs/providers)
+- **自动配置模型：** 自动为环境文件中设置的提供商 API 密钥添加对应模型
+- **管理界面和用量跟踪：** `docker-compose.yml` 包含用于管理界面、虚拟密钥管理和支出追踪的 PostgreSQL 数据库
+- **模型管理：** 通过辅助脚本（`litellm_manage`）管理模型
+- **自动构建：** 通过 [GitHub Actions](https://github.com/hwdsl2/docker-litellm/actions) 自动构建和发布
+
+也可作为 [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-zh.md) 的一部分使用，一条命令即可部署完整的自托管 AI 技术栈。
 
 > 📘 [The Self-Hosted AI Builder’s Guide](https://books2read.com/aiguide?store=amazon) 是一本关于构建、保护和运维自己的私有 AI 技术栈的实用指南。
 
