@@ -8,7 +8,7 @@
 
 通过 GatewayCrate，将应用连接到已配置的云端和本地模型提供商。由 [LiteLLM](https://github.com/BerriAI/litellm) 驱动，提供统一的 OpenAI 兼容 API、自动模型配置和管理工具。项目提供的 PostgreSQL 配置可启用管理界面、虚拟密钥和支出追踪。
 
-原名为 `docker-litellm`。Docker 镜像仍为 `hwdsl2/litellm-server`。
+> 本项目原名为 `docker-litellm`，由 [hwdsl2](https://github.com/hwdsl2) 维护。Docker 镜像仍为 `hwdsl2/litellm-server`。
 
 **功能特性：**
 

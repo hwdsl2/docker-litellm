@@ -8,7 +8,7 @@
 
 Connect applications to configured cloud and local model providers through GatewayCrate. Powered by [LiteLLM](https://github.com/BerriAI/litellm), it provides a common OpenAI-compatible API, automatic model configuration, and management helpers. The included PostgreSQL configuration enables the admin UI, virtual keys, and spend tracking.
 
-Previously known as `docker-litellm`. The Docker image remains `hwdsl2/litellm-server`.
+> Previously known as `docker-litellm`, maintained by [hwdsl2](https://github.com/hwdsl2). The Docker image remains `hwdsl2/litellm-server`.
 
 **Features:**
 
