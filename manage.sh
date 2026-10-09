@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# https://github.com/hwdsl2/docker-litellm
+# https://github.com/hwdsl2/gatewaycrate
 #
 # Copyright (C) 2026 Lin Song <linsongui@gmail.com>
 #
@@ -24,8 +24,8 @@ show_usage() {
   fi
   cat 1>&2 <<'EOF'
 
-LiteLLM Docker - Proxy Management
-https://github.com/hwdsl2/docker-litellm
+GatewayCrate - Proxy Management
+https://github.com/hwdsl2/gatewaycrate
 
 Usage: docker exec <container> litellm_manage [options]
 
@@ -488,7 +488,7 @@ _restart_proxy() {
 do_show_key() {
   echo
   echo "==========================================================="
-  echo "LiteLLM proxy master key"
+  echo "GatewayCrate master key"
   echo "==========================================================="
   echo "${LITELLM_MASTER_KEY}"
   echo "==========================================================="

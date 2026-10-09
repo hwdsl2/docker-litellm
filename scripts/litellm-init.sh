@@ -2,8 +2,8 @@
 #
 # Initialize shared LiteLLM compose secrets before dependent services start.
 #
-# This file is part of LiteLLM Docker image, available at:
-# https://github.com/hwdsl2/docker-litellm
+# This file is part of GatewayCrate image, available at:
+# https://github.com/hwdsl2/gatewaycrate
 #
 # Copyright (C) 2026 Lin Song <linsongui@gmail.com>
 #

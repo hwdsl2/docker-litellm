@@ -5,8 +5,8 @@
 # DO NOT RUN THIS SCRIPT ON YOUR PC OR MAC! THIS IS ONLY MEANT TO BE RUN
 # IN A CONTAINER!
 #
-# This file is part of LiteLLM Docker image, available at:
-# https://github.com/hwdsl2/docker-litellm
+# This file is part of GatewayCrate image, available at:
+# https://github.com/hwdsl2/gatewaycrate
 #
 # Copyright (C) 2026 Lin Song <linsongui@gmail.com>
 #
@@ -269,7 +269,7 @@ else
   fi
 fi
 echo
-echo "LiteLLM Docker - https://github.com/hwdsl2/docker-litellm"
+echo "GatewayCrate - https://github.com/hwdsl2/gatewaycrate"
 
 # Configure database if specified
 if [ -n "$LITELLM_DATABASE_URL" ]; then
@@ -391,10 +391,10 @@ PYEOF
 # On subsequent restarts the existing file is preserved, keeping model_list intact.
 if [ ! -f /etc/litellm/config.yaml ]; then
   cat > /etc/litellm/config.yaml << 'EOF'
-# LiteLLM Proxy Configuration
-# Managed by docker-litellm — do not edit manually.
+# GatewayCrate Proxy Configuration (powered by LiteLLM)
+# Managed by GatewayCrate — do not edit manually.
 # Use 'litellm_manage' to add or remove models.
-# https://github.com/hwdsl2/docker-litellm
+# https://github.com/hwdsl2/gatewaycrate
 
 model_list: []
 
@@ -560,7 +560,7 @@ fi
 if $first_run; then
   echo
   echo "==========================================================="
-  echo "LiteLLM proxy master key"
+  echo "GatewayCrate master key"
   echo "==========================================================="
   echo "${master_key}"
   echo "==========================================================="
@@ -569,7 +569,7 @@ if $first_run; then
   echo "Proxy UI:       http://${server_addr}:${LITELLM_PORT}/ui"
   echo
   echo "To set up HTTPS, see: Using a reverse proxy"
-  echo "  https://github.com/hwdsl2/docker-litellm#using-a-reverse-proxy"
+  echo "  https://github.com/hwdsl2/gatewaycrate#using-a-reverse-proxy"
   echo
   echo "Test with OpenAI-compatible API:"
   echo "  curl http://${server_addr}:${LITELLM_PORT}/v1/models \\"
