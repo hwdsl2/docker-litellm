@@ -8,9 +8,9 @@ assignees: ''
 ---
 **Checklist**
 
-- [ ] I read the [README](https://github.com/hwdsl2/docker-litellm/blob/main/README.md) or the relevant section
-- [ ] I searched existing [Issues](https://github.com/hwdsl2/docker-litellm/issues?q=is%3Aissue)
-- [ ] This issue is about the LiteLLM Docker image/config/API, not only LiteLLM itself
+- [ ] I read the [README](https://github.com/hwdsl2/gatewaycrate/blob/main/README.md) or the relevant section
+- [ ] I searched existing [Issues](https://github.com/hwdsl2/gatewaycrate/issues?q=is%3Aissue)
+- [ ] This issue is about the GatewayCrate Docker image/config/API, not only LiteLLM itself
 
 <!---
 If you found a reproducible bug in the upstream project itself, consider opening an issue upstream: [LiteLLM](https://github.com/BerriAI/litellm).
@@ -51,7 +51,7 @@ Remove secrets, API keys, tokens and private URLs before posting.
 - Model management command output, if relevant:
 - Other management command output, if relevant (for example `docker exec litellm litellm_manage --showkey`):
 - Admin UI, virtual key, database, or master key behavior, if relevant:
-- MCP Gateway integration details, if relevant:
+- ToolUplink integration details, if relevant:
 - Request endpoint and sanitized request/response details:
 
 **Logs**

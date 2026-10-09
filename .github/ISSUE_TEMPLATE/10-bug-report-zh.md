@@ -8,9 +8,9 @@ assignees: ''
 ---
 **任务列表**
 
-- [ ] 我已阅读[自述文件](https://github.com/hwdsl2/docker-litellm/blob/main/README-zh.md)或相关章节
-- [ ] 我搜索了已有的 [Issues](https://github.com/hwdsl2/docker-litellm/issues?q=is%3Aissue)
-- [ ] 这个问题是关于 LiteLLM Docker 镜像/配置/API，而不只是 LiteLLM 本身
+- [ ] 我已阅读[自述文件](https://github.com/hwdsl2/gatewaycrate/blob/main/README-zh.md)或相关章节
+- [ ] 我搜索了已有的 [Issues](https://github.com/hwdsl2/gatewaycrate/issues?q=is%3Aissue)
+- [ ] 这个问题是关于 GatewayCrate Docker 镜像/配置/API，而不只是 LiteLLM 本身
 
 <!---
 如果你确认问题属于上游项目本身，请考虑在相应上游项目提交 issue：[LiteLLM](https://github.com/BerriAI/litellm)。
@@ -51,7 +51,7 @@ assignees: ''
 - 模型管理命令输出（如果相关）：
 - 其它相关管理命令输出（例如 `docker exec litellm litellm_manage --showkey`）：
 - 管理界面、虚拟 key、数据库或 master key 行为（如果相关）：
-- MCP Gateway 集成细节（如果相关）：
+- ToolUplink 集成细节（如果相关）：
 - 请求接口以及去除敏感信息后的请求/响应细节：
 
 **日志**

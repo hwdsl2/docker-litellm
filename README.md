@@ -1,10 +1,14 @@
 [English](README.md) | [简体中文](README-zh.md) | [繁體中文](README-zh-Hant.md) | [Русский](README-ru.md)
 
-# LiteLLM AI Gateway on Docker
+# GatewayCrate
 
-[![Build Status](https://github.com/hwdsl2/docker-litellm/actions/workflows/main.yml/badge.svg)](https://github.com/hwdsl2/docker-litellm/actions/workflows/main.yml) &nbsp;[![Docker Pulls](https://raw.githubusercontent.com/hwdsl2/badges/main/img/docker-pulls-litellm-server.svg)](https://hub.docker.com/r/hwdsl2/litellm-server) &nbsp;[![License: MIT](docs/images/license.svg)](https://opensource.org/licenses/MIT)
+**Open-source, self-hosted AI gateway.**
 
-Docker image to run a [LiteLLM](https://github.com/BerriAI/litellm) AI gateway proxy. Provides a single OpenAI-compatible API endpoint in front of 100+ LLM providers. Based on Debian (python:3.12-slim). Designed to be simple, private, and self-hosted.
+[![Build Status](https://github.com/hwdsl2/gatewaycrate/actions/workflows/main.yml/badge.svg)](https://github.com/hwdsl2/gatewaycrate/actions/workflows/main.yml) &nbsp;[![Docker Pulls](https://raw.githubusercontent.com/hwdsl2/badges/main/img/docker-pulls-litellm-server.svg)](https://hub.docker.com/r/hwdsl2/litellm-server) &nbsp;[![License: MIT](docs/images/license.svg)](https://opensource.org/licenses/MIT)
+
+Connect applications to configured cloud and local model providers through GatewayCrate. Powered by [LiteLLM](https://github.com/BerriAI/litellm), it provides a common OpenAI-compatible API, automatic model configuration, and management helpers. The included PostgreSQL configuration enables the admin UI, virtual keys, and spend tracking.
+
+Previously known as `docker-litellm`. The Docker image remains `hwdsl2/litellm-server`.
 
 **Features:**
 
@@ -14,7 +18,7 @@ Docker image to run a [LiteLLM](https://github.com/BerriAI/litellm) AI gateway p
 - **Automatic model configuration:** adds models for provider API keys set in the env file.
 - **Admin UI and usage tracking:** `docker-compose.yml` includes PostgreSQL for the Admin UI, virtual key management, and spend tracking.
 - **Model management:** via a helper script (`litellm_manage`).
-- **Automated builds:** images are automatically built and published through [GitHub Actions](https://github.com/hwdsl2/docker-litellm/actions).
+- **Automated builds:** images are automatically built and published through [GitHub Actions](https://github.com/hwdsl2/gatewaycrate/actions).
 
 Also available as part of the [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack), which deploys a complete self-hosted AI stack with a single command.
 
@@ -22,11 +26,11 @@ Also available as part of the [Self-Hosted AI Stack](https://github.com/hwdsl2/s
 
 **Also available:**
 
-- Related AI services: [ScribeCrate](https://github.com/hwdsl2/scribecrate), [SpeakCrate](https://github.com/hwdsl2/speakcrate), [Embeddings](https://github.com/hwdsl2/docker-embeddings), [Ollama](https://github.com/hwdsl2/docker-ollama), [ParseCrate](https://github.com/hwdsl2/parsecrate), [MCP Gateway](https://github.com/hwdsl2/docker-mcp-gateway)
+- Related AI services: [ScribeCrate](https://github.com/hwdsl2/scribecrate), [SpeakCrate](https://github.com/hwdsl2/speakcrate), [EmbedCrate](https://github.com/hwdsl2/embedcrate), [InferCrate](https://github.com/hwdsl2/infercrate), [ParseCrate](https://github.com/hwdsl2/parsecrate), [ToolUplink](https://github.com/hwdsl2/tooluplink)
 
 ## Quick start
 
-**Step 1.** Start the LiteLLM proxy:
+**Step 1.** Start GatewayCrate:
 
 ```bash
 docker run \
@@ -48,7 +52,7 @@ On first start, the server automatically generates a master API key and creates 
 docker logs litellm
 ```
 
-The master key is displayed in a box labeled **LiteLLM proxy master key**. Copy this key — you will use it to authenticate all API requests.
+The master key is displayed in a box labeled **GatewayCrate master key**. Copy this key — you will use it to authenticate all API requests.
 
 **Note:** The master key is only printed during the first-run setup. To display it again at any time, run:
 
@@ -94,7 +98,7 @@ To learn more about how to use this image, read the sections below.
 ## Requirements
 
 - A Linux server (local or cloud) with Docker installed
-- At least one LLM provider API key (OpenAI, Anthropic, Groq, etc.) **or** a locally running [Ollama](https://github.com/hwdsl2/docker-ollama) instance
+- At least one LLM provider API key (OpenAI, Anthropic, Groq, etc.) **or** a locally running [InferCrate](https://github.com/hwdsl2/infercrate) instance
 - TCP port 4000 (or your configured port) open and accessible
 
 No LLM provider keys are required to start the proxy — the server starts successfully with an empty model list. Add models at any time using `litellm_manage`.
@@ -135,11 +139,11 @@ This Docker image uses the following variables, that can be declared in an `env`
 | `LITELLM_GROQ_API_KEY` | Groq API key — auto-adds `llama-3.3-70b` | *(not set)* |
 | `LITELLM_GEMINI_API_KEY` | Google Gemini API key — auto-adds `gemini-2.0-flash` | *(not set)* |
 | `LITELLM_OLLAMA_BASE_URL` | Ollama base URL — ensures `ollama/llama3.2:3b` and `ollama-chat/llama3.2:3b` | *(not set)* |
-| `LITELLM_OLLAMA_API_KEY` | Ollama API key (auto-read from shared volume in [self-hosted-ai-stack](https://github.com/hwdsl2/self-hosted-ai-stack)) | *(not set)* |
+| `LITELLM_OLLAMA_API_KEY` | InferCrate API key (auto-read from shared volume in [self-hosted-ai-stack](https://github.com/hwdsl2/self-hosted-ai-stack)) | *(not set)* |
 | `LITELLM_DATABASE_URL` | PostgreSQL URL — enables virtual key management | *(not set)* |
 | `LITELLM_POSTGRES_PASSWORD_FILE` | File containing the Compose Postgres password; used only when `LITELLM_DATABASE_URL` is not set | *(not set)* |
-| `LITELLM_MCP_URL` | MCP Gateway endpoint URL — auto-wires MCP Gateway on every start | *(not set)* |
-| `LITELLM_MCP_API_KEY` | Bearer token for the MCP Gateway (required when `LITELLM_MCP_URL` is set) | *(not set)* |
+| `LITELLM_MCP_URL` | ToolUplink endpoint URL — auto-wires ToolUplink on every start | *(not set)* |
+| `LITELLM_MCP_API_KEY` | Bearer token for the ToolUplink (required when `LITELLM_MCP_URL` is set) | *(not set)* |
 | `LITELLM_DISABLE_USAGE_COUNTS` | Set to `1` to disable anonymous aggregate usage counts. | *(not set)* |
 
 **Note:** In your `env` file, you may enclose values in single quotes, e.g. `VAR='value'`. Do not add spaces around `=`. If you change `LITELLM_PORT`, update the `-p` flag in the `docker run` command accordingly.
@@ -225,13 +229,13 @@ docker exec litellm litellm_manage --showkey
 docker exec litellm litellm_manage --getkey
 ```
 
-## MCP Gateway integration
+## ToolUplink integration
 
-Set `LITELLM_MCP_URL` (and optionally `LITELLM_MCP_API_KEY`) in your `litellm.env` file to automatically wire LiteLLM to an MCP Gateway, so AI clients can call MCP tools directly through the LiteLLM proxy.
+Set `LITELLM_MCP_URL` (and optionally `LITELLM_MCP_API_KEY`) in your `litellm.env` file to automatically wire LiteLLM to an ToolUplink, so AI clients can call MCP tools directly through the LiteLLM proxy.
 
 When `LITELLM_MCP_URL` is set, an `mcp_servers:` block is injected into `config.yaml` on every container start — no manual YAML editing required.
 
-**Wire to an MCP Gateway:**
+**Wire to an ToolUplink:**
 
 ```bash
 # In litellm.env:
@@ -482,7 +486,7 @@ Your data is preserved in the `litellm-data` volume.
 
 LiteLLM can be used as the AI gateway in a broader self-hosted AI setup.
 
-For full and lightweight Docker Compose stacks, manual `docker run` examples, and voice/RAG/MCP pipeline examples with SpeakCrate, Embeddings, LiteLLM, Ollama, ParseCrate, and MCP Gateway, see [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack).
+For full and lightweight Docker Compose stacks, manual `docker run` examples, and voice/RAG/MCP pipeline examples with SpeakCrate, EmbedCrate, GatewayCrate, InferCrate, ParseCrate, and ToolUplink, see [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack).
 
 ## Usage counts
 

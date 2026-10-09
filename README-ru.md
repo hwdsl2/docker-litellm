@@ -1,10 +1,14 @@
 [English](README.md) | [简体中文](README-zh.md) | [繁體中文](README-zh-Hant.md) | [Русский](README-ru.md)
 
-# LiteLLM AI-шлюз на Docker
+# GatewayCrate
 
-[![Build Status](https://github.com/hwdsl2/docker-litellm/actions/workflows/main.yml/badge.svg)](https://github.com/hwdsl2/docker-litellm/actions/workflows/main.yml) &nbsp;[![Docker Pulls](https://raw.githubusercontent.com/hwdsl2/badges/main/img/docker-pulls-litellm-server.svg)](https://hub.docker.com/r/hwdsl2/litellm-server) &nbsp;[![License: MIT](docs/images/license.svg)](https://opensource.org/licenses/MIT)
+**ИИ-шлюз с открытым исходным кодом для самостоятельного размещения.**
 
-Docker-образ для запуска прокси-шлюза [LiteLLM](https://github.com/BerriAI/litellm). Обеспечивает единую точку доступа через OpenAI-совместимый API для более чем 100 провайдеров больших языковых моделей (LLM). Основан на Debian (python:3.12-slim). Прост в использовании, приватен и самостоятельно размещаем.
+[![Build Status](https://github.com/hwdsl2/gatewaycrate/actions/workflows/main.yml/badge.svg)](https://github.com/hwdsl2/gatewaycrate/actions/workflows/main.yml) &nbsp;[![Docker Pulls](https://raw.githubusercontent.com/hwdsl2/badges/main/img/docker-pulls-litellm-server.svg)](https://hub.docker.com/r/hwdsl2/litellm-server) &nbsp;[![License: MIT](docs/images/license.svg)](https://opensource.org/licenses/MIT)
+
+Подключайте приложения к настроенным облачным и локальным провайдерам моделей через GatewayCrate. Шлюз работает на базе [LiteLLM](https://github.com/BerriAI/litellm) и предоставляет единый совместимый с OpenAI API, автоматическую настройку моделей и инструменты управления. Включённая конфигурация PostgreSQL обеспечивает панель администратора, виртуальные ключи и отслеживание расходов.
+
+Ранее проект назывался `docker-litellm`. Docker-образ остаётся `hwdsl2/litellm-server`.
 
 **Возможности:**
 
@@ -14,7 +18,7 @@ Docker-образ для запуска прокси-шлюза [LiteLLM](https:
 - **Автоматическая настройка моделей:** Автоматически добавляет модели для провайдеров, ключи которых заданы в env-файле
 - **Панель управления и учёт расходов:** `docker-compose.yml` включает базу данных PostgreSQL для панели администратора, управления виртуальными ключами и отслеживания расходов
 - **Управление моделями:** через вспомогательный скрипт (`litellm_manage`)
-- **Автоматическая сборка:** образы автоматически собираются и публикуются через [GitHub Actions](https://github.com/hwdsl2/docker-litellm/actions).
+- **Автоматическая сборка:** образы автоматически собираются и публикуются через [GitHub Actions](https://github.com/hwdsl2/gatewaycrate/actions).
 
 Также доступен в составе [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-ru.md), который развёртывает полный AI-стек на собственном сервере одной командой.
 
@@ -22,11 +26,11 @@ Docker-образ для запуска прокси-шлюза [LiteLLM](https:
 
 **Также доступно:**
 
-- Связанные AI-сервисы: [ScribeCrate](https://github.com/hwdsl2/scribecrate/blob/main/README-ru.md), [SpeakCrate](https://github.com/hwdsl2/speakcrate/blob/main/README-ru.md), [Embeddings](https://github.com/hwdsl2/docker-embeddings/blob/main/README-ru.md), [Ollama](https://github.com/hwdsl2/docker-ollama/blob/main/README-ru.md), [ParseCrate](https://github.com/hwdsl2/parsecrate/blob/main/README-ru.md), [MCP Gateway](https://github.com/hwdsl2/docker-mcp-gateway/blob/main/README-ru.md)
+- Связанные AI-сервисы: [ScribeCrate](https://github.com/hwdsl2/scribecrate/blob/main/README-ru.md), [SpeakCrate](https://github.com/hwdsl2/speakcrate/blob/main/README-ru.md), [EmbedCrate](https://github.com/hwdsl2/embedcrate/blob/main/README-ru.md), [InferCrate](https://github.com/hwdsl2/infercrate/blob/main/README-ru.md), [ParseCrate](https://github.com/hwdsl2/parsecrate/blob/main/README-ru.md), [ToolUplink](https://github.com/hwdsl2/tooluplink/blob/main/README-ru.md)
 
 ## Быстрый старт
 
-**Шаг 1.** Запустите прокси LiteLLM:
+**Шаг 1.** Запустите GatewayCrate:
 
 ```bash
 docker run \
@@ -48,7 +52,7 @@ docker run \
 docker logs litellm
 ```
 
-Мастер-ключ отображается в рамке с заголовком **LiteLLM proxy master key**. Скопируйте этот ключ — он используется для аутентификации всех API-запросов.
+Мастер-ключ отображается в рамке с заголовком **GatewayCrate master key**. Скопируйте этот ключ — он используется для аутентификации всех API-запросов.
 
 **Примечание:** Мастер-ключ выводится только при первоначальной настройке. Чтобы отобразить его в любой момент, выполните:
 
@@ -92,7 +96,7 @@ curl http://localhost:4000/v1/chat/completions \
 ## Требования
 
 - Сервер Linux (локальный или облачный) с установленным Docker
-- Хотя бы один API-ключ провайдера LLM (OpenAI, Anthropic, Groq и др.) **или** локально запущенный экземпляр [Ollama](https://github.com/hwdsl2/docker-ollama)
+- Хотя бы один API-ключ провайдера LLM (OpenAI, Anthropic, Groq и др.) **или** локально запущенный экземпляр [InferCrate](https://github.com/hwdsl2/infercrate)
 - Открытый TCP-порт 4000 (или настроенный вами порт)
 
 Запуск прокси возможен без ключей провайдеров LLM — сервер успешно стартует с пустым списком моделей. Модели можно добавить в любой момент с помощью `litellm_manage`.
@@ -136,8 +140,8 @@ docker image tag quay.io/hwdsl2/litellm-server hwdsl2/litellm-server
 | `LITELLM_OLLAMA_API_KEY` | API-ключ Ollama (автоматически считывается из общего тома в [self-hosted-ai-stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-ru.md)) | *(не задано)* |
 | `LITELLM_DATABASE_URL` | URL PostgreSQL — включает управление виртуальными ключами | *(не задано)* |
 | `LITELLM_POSTGRES_PASSWORD_FILE` | Файл с паролем PostgreSQL для Compose; используется только если `LITELLM_DATABASE_URL` не задан | *(не задано)* |
-| `LITELLM_MCP_URL` | URL конечной точки MCP Gateway — автоподключение к MCP Gateway при каждом запуске | *(не задано)* |
-| `LITELLM_MCP_API_KEY` | Bearer-токен для MCP Gateway (обязателен при установке `LITELLM_MCP_URL`) | *(не задано)* |
+| `LITELLM_MCP_URL` | URL конечной точки ToolUplink — автоподключение к ToolUplink при каждом запуске | *(не задано)* |
+| `LITELLM_MCP_API_KEY` | Bearer-токен для ToolUplink (обязателен при установке `LITELLM_MCP_URL`) | *(не задано)* |
 | `LITELLM_DISABLE_USAGE_COUNTS` | Установите `1`, чтобы отключить анонимные агрегированные счётчики использования. | *(не задано)* |
 
 **Примечание:** В файле `env` можно заключать значения в одинарные кавычки, например `VAR='значение'`. Не добавляйте пробелы вокруг `=`. Если вы изменили `LITELLM_PORT`, обновите флаг `-p` в команде `docker run` соответствующим образом.
@@ -223,13 +227,13 @@ docker exec litellm litellm_manage --showkey
 docker exec litellm litellm_manage --getkey
 ```
 
-## Интеграция с MCP Gateway
+## Интеграция с ToolUplink
 
-Укажите `LITELLM_MCP_URL` (и при необходимости `LITELLM_MCP_API_KEY`) в файле `litellm.env`, чтобы автоматически подключить LiteLLM к MCP Gateway — AI-клиенты смогут вызывать MCP-инструменты напрямую через прокси LiteLLM.
+Укажите `LITELLM_MCP_URL` (и при необходимости `LITELLM_MCP_API_KEY`) в файле `litellm.env`, чтобы автоматически подключить LiteLLM к ToolUplink — AI-клиенты смогут вызывать MCP-инструменты напрямую через прокси LiteLLM.
 
 При наличии `LITELLM_MCP_URL` блок `mcp_servers:` автоматически добавляется в `config.yaml` при каждом запуске контейнера — ручное редактирование YAML не требуется.
 
-**Подключение к MCP Gateway:**
+**Подключение к ToolUplink:**
 
 ```bash
 # В файле litellm.env:
@@ -478,7 +482,7 @@ docker rm -f litellm
 
 LiteLLM можно использовать как AI-шлюз в более широком self-hosted AI-стеке.
 
-Готовые полные и облегчённые стеки Docker Compose, примеры ручного запуска через `docker run`, а также примеры голосовых, RAG- и MCP-конвейеров с SpeakCrate, Embeddings, LiteLLM, Ollama, ParseCrate и MCP Gateway см. в [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-ru.md).
+Готовые полные и облегчённые стеки Docker Compose, примеры ручного запуска через `docker run`, а также примеры голосовых, RAG- и MCP-конвейеров с SpeakCrate, EmbedCrate, GatewayCrate, InferCrate, ParseCrate и ToolUplink см. в [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-ru.md).
 
 ## Счётчики использования
 

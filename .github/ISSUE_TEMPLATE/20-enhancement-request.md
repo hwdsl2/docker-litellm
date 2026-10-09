@@ -8,9 +8,9 @@ assignees: ''
 ---
 **Checklist**
 
-- [ ] I searched existing [Issues](https://github.com/hwdsl2/docker-litellm/issues?q=is%3Aissue), and did not find a similar enhancement request
-- [ ] I read the [README](https://github.com/hwdsl2/docker-litellm/blob/main/README.md) or the relevant section
-- [ ] This request is about the LiteLLM Docker image/config/API, not only LiteLLM itself
+- [ ] I searched existing [Issues](https://github.com/hwdsl2/gatewaycrate/issues?q=is%3Aissue), and did not find a similar enhancement request
+- [ ] I read the [README](https://github.com/hwdsl2/gatewaycrate/blob/main/README.md) or the relevant section
+- [ ] This request is about the GatewayCrate Docker image/config/API, not only LiteLLM itself
 
 **Describe the enhancement request**
 A clear and concise description of your enhancement request.

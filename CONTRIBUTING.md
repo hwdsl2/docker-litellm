@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for helping improve this project. This repository maintains the Docker image for LiteLLM; changes that only affect multi-service orchestration belong in [self-hosted-ai-stack](https://github.com/hwdsl2/self-hosted-ai-stack).
+Thanks for helping improve this project. This repository maintains the GatewayCrate Docker image, powered by LiteLLM; changes that only affect multi-service orchestration belong in [self-hosted-ai-stack](https://github.com/hwdsl2/self-hosted-ai-stack).
 
 ## Before You Start
 

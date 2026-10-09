@@ -1,10 +1,14 @@
 [English](README.md) | [简体中文](README-zh.md) | [繁體中文](README-zh-Hant.md) | [Русский](README-ru.md)
 
-# LiteLLM AI 閘道 Docker 映像
+# GatewayCrate
 
-[![Build Status](https://github.com/hwdsl2/docker-litellm/actions/workflows/main.yml/badge.svg)](https://github.com/hwdsl2/docker-litellm/actions/workflows/main.yml) &nbsp;[![Docker Pulls](https://raw.githubusercontent.com/hwdsl2/badges/main/img/docker-pulls-litellm-server.svg)](https://hub.docker.com/r/hwdsl2/litellm-server) &nbsp;[![License: MIT](docs/images/license.svg)](https://opensource.org/licenses/MIT)
+**開源、自託管的 AI 閘道。**
 
-執行 [LiteLLM](https://github.com/BerriAI/litellm) AI 閘道代理的 Docker 映像。在 100 個以上大型語言模型（LLM）提供商前面提供統一的 OpenAI 相容 API 端點。基於 Debian (python:3.12-slim)。簡單、私密、可自行託管。
+[![Build Status](https://github.com/hwdsl2/gatewaycrate/actions/workflows/main.yml/badge.svg)](https://github.com/hwdsl2/gatewaycrate/actions/workflows/main.yml) &nbsp;[![Docker Pulls](https://raw.githubusercontent.com/hwdsl2/badges/main/img/docker-pulls-litellm-server.svg)](https://hub.docker.com/r/hwdsl2/litellm-server) &nbsp;[![License: MIT](docs/images/license.svg)](https://opensource.org/licenses/MIT)
+
+透過 GatewayCrate，將應用程式連接到已設定的雲端和本地模型提供者。由 [LiteLLM](https://github.com/BerriAI/litellm) 驅動，提供統一且相容於 OpenAI 的 API、自動模型設定和管理工具。專案提供的 PostgreSQL 設定可啟用管理介面、虛擬金鑰和支出追蹤。
+
+原名為 `docker-litellm`。Docker 映像仍為 `hwdsl2/litellm-server`。
 
 **功能特性：**
 
@@ -14,7 +18,7 @@
 - **自動設定模型：** 自動為環境檔案中設定的提供商 API 金鑰新增對應模型
 - **管理介面與用量追蹤：** `docker-compose.yml` 包含用於管理介面、虛擬金鑰管理和支出追蹤的 PostgreSQL 資料庫
 - **模型管理：** 透過輔助腳本（`litellm_manage`）管理模型
-- **自動建置：** 透過 [GitHub Actions](https://github.com/hwdsl2/docker-litellm/actions) 自動建置和發布
+- **自動建置：** 透過 [GitHub Actions](https://github.com/hwdsl2/gatewaycrate/actions) 自動建置和發布
 
 也可作為 [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-zh-Hant.md) 的一部分使用，一條命令即可部署完整的自託管 AI 技術堆疊。
 
@@ -22,11 +26,11 @@
 
 **另提供：**
 
-- 相關 AI 服務：[ScribeCrate](https://github.com/hwdsl2/scribecrate/blob/main/README-zh-Hant.md)、[SpeakCrate](https://github.com/hwdsl2/speakcrate/blob/main/README-zh-Hant.md)、[Embeddings](https://github.com/hwdsl2/docker-embeddings/blob/main/README-zh-Hant.md)、[Ollama](https://github.com/hwdsl2/docker-ollama/blob/main/README-zh-Hant.md)、[ParseCrate](https://github.com/hwdsl2/parsecrate/blob/main/README-zh-Hant.md)、[MCP Gateway](https://github.com/hwdsl2/docker-mcp-gateway/blob/main/README-zh-Hant.md)
+- 相關 AI 服務：[ScribeCrate](https://github.com/hwdsl2/scribecrate/blob/main/README-zh-Hant.md)、[SpeakCrate](https://github.com/hwdsl2/speakcrate/blob/main/README-zh-Hant.md)、[EmbedCrate](https://github.com/hwdsl2/embedcrate/blob/main/README-zh-Hant.md)、[InferCrate](https://github.com/hwdsl2/infercrate/blob/main/README-zh-Hant.md)、[ParseCrate](https://github.com/hwdsl2/parsecrate/blob/main/README-zh-Hant.md)、[ToolUplink](https://github.com/hwdsl2/tooluplink/blob/main/README-zh-Hant.md)
 
 ## 快速開始
 
-**第一步。** 啟動 LiteLLM 代理：
+**第一步。** 啟動 GatewayCrate：
 
 ```bash
 docker run \
@@ -48,7 +52,7 @@ docker run \
 docker logs litellm
 ```
 
-主金鑰顯示在標有 **LiteLLM proxy master key** 的方框中。請複製此金鑰 — 您將使用它來驗證所有 API 請求。
+主金鑰顯示在標有 **GatewayCrate master key** 的方框中。請複製此金鑰 — 您將使用它來驗證所有 API 請求。
 
 **注：** 主金鑰僅在首次執行設定期間列印。如需隨時再次顯示，請執行：
 
@@ -92,7 +96,7 @@ curl http://localhost:4000/v1/chat/completions \
 ## 系統需求
 
 - 已安裝 Docker 的 Linux 伺服器（本地端或雲端）
-- 至少一個 LLM 提供商 API 金鑰（OpenAI、Anthropic、Groq 等）**或** 本機執行的 [Ollama](https://github.com/hwdsl2/docker-ollama) 實例
+- 至少一個 LLM 提供商 API 金鑰（OpenAI、Anthropic、Groq 等）**或** 本機執行的 [InferCrate](https://github.com/hwdsl2/infercrate) 實例
 - TCP 連接埠 4000（或您設定的連接埠）已開放
 
 不需要 LLM 提供商金鑰也可以啟動代理 — 伺服器可以在模型清單為空的情況下成功啟動。隨時可以使用 `litellm_manage` 新增模型。
@@ -223,7 +227,7 @@ docker exec litellm litellm_manage --showkey
 docker exec litellm litellm_manage --getkey
 ```
 
-## MCP 閘道整合
+## ToolUplink 整合
 
 在 `litellm.env` 檔案中設定 `LITELLM_MCP_URL`（以及可選的 `LITELLM_MCP_API_KEY`），即可將 LiteLLM 自動接入 MCP 閘道，使 AI 用戶端能夠透過 LiteLLM 代理直接呼叫 MCP 工具。
 
@@ -478,7 +482,7 @@ docker rm -f litellm
 
 LiteLLM 可作為更廣泛的自託管 AI 設定中的 AI 閘道。
 
-如需完整和輕量級 Docker Compose 技術堆疊、手動 `docker run` 範例，以及結合 SpeakCrate、Embeddings、LiteLLM、Ollama、ParseCrate 和 MCP Gateway 的語音/RAG/MCP 流水線範例，請參閱 [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-zh-Hant.md)。
+如需完整和輕量級 Docker Compose 技術堆疊、手動 `docker run` 範例，以及結合 SpeakCrate、EmbedCrate、GatewayCrate、InferCrate、ParseCrate 和 ToolUplink 的語音/RAG/MCP 流水線範例，請參閱 [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-zh-Hant.md)。
 
 ## 使用計數
 
