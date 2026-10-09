@@ -98,7 +98,7 @@ To learn more about how to use this image, read the sections below.
 ## Requirements
 
 - A Linux server (local or cloud) with Docker installed
-- At least one LLM provider API key (OpenAI, Anthropic, Groq, etc.) **or** a locally running [InferCrate](https://github.com/hwdsl2/infercrate) instance
+- At least one LLM provider API key (OpenAI, Anthropic, Groq, etc.) **or** a locally running Ollama server, such as [InferCrate](https://github.com/hwdsl2/infercrate)
 - TCP port 4000 (or your configured port) open and accessible
 
 No LLM provider keys are required to start the proxy — the server starts successfully with an empty model list. Add models at any time using `litellm_manage`.
@@ -139,11 +139,11 @@ This Docker image uses the following variables, that can be declared in an `env`
 | `LITELLM_GROQ_API_KEY` | Groq API key — auto-adds `llama-3.3-70b` | *(not set)* |
 | `LITELLM_GEMINI_API_KEY` | Google Gemini API key — auto-adds `gemini-2.0-flash` | *(not set)* |
 | `LITELLM_OLLAMA_BASE_URL` | Ollama base URL — ensures `ollama/llama3.2:3b` and `ollama-chat/llama3.2:3b` | *(not set)* |
-| `LITELLM_OLLAMA_API_KEY` | InferCrate API key (auto-read from shared volume in [self-hosted-ai-stack](https://github.com/hwdsl2/self-hosted-ai-stack)) | *(not set)* |
+| `LITELLM_OLLAMA_API_KEY` | API key for the Ollama endpoint (auto-read from shared volume in [self-hosted-ai-stack](https://github.com/hwdsl2/self-hosted-ai-stack)) | *(not set)* |
 | `LITELLM_DATABASE_URL` | PostgreSQL URL — enables virtual key management | *(not set)* |
 | `LITELLM_POSTGRES_PASSWORD_FILE` | File containing the Compose Postgres password; used only when `LITELLM_DATABASE_URL` is not set | *(not set)* |
-| `LITELLM_MCP_URL` | ToolUplink endpoint URL — auto-wires ToolUplink on every start | *(not set)* |
-| `LITELLM_MCP_API_KEY` | Bearer token for the ToolUplink (required when `LITELLM_MCP_URL` is set) | *(not set)* |
+| `LITELLM_MCP_URL` | Compatible MCP HTTP endpoint URL (for example, ToolUplink), registered on every start | *(not set)* |
+| `LITELLM_MCP_API_KEY` | Bearer token for the MCP endpoint (required for authenticated endpoints such as ToolUplink) | *(not set)* |
 | `LITELLM_DISABLE_USAGE_COUNTS` | Set to `1` to disable anonymous aggregate usage counts. | *(not set)* |
 
 **Note:** In your `env` file, you may enclose values in single quotes, e.g. `VAR='value'`. Do not add spaces around `=`. If you change `LITELLM_PORT`, update the `-p` flag in the `docker run` command accordingly.
@@ -231,11 +231,11 @@ docker exec litellm litellm_manage --getkey
 
 ## ToolUplink integration
 
-Set `LITELLM_MCP_URL` (and optionally `LITELLM_MCP_API_KEY`) in your `litellm.env` file to automatically wire LiteLLM to an ToolUplink, so AI clients can call MCP tools directly through the LiteLLM proxy.
+Set `LITELLM_MCP_URL` in your `litellm.env` file to connect GatewayCrate to a compatible MCP HTTP endpoint, such as ToolUplink. Set `LITELLM_MCP_API_KEY` if the endpoint requires Bearer authentication. AI clients can then call MCP tools through the LiteLLM proxy.
 
 When `LITELLM_MCP_URL` is set, an `mcp_servers:` block is injected into `config.yaml` on every container start — no manual YAML editing required.
 
-**Wire to an ToolUplink:**
+**Example: connect to ToolUplink:**
 
 ```bash
 # In litellm.env:

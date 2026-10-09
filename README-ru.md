@@ -96,7 +96,7 @@ curl http://localhost:4000/v1/chat/completions \
 ## Требования
 
 - Сервер Linux (локальный или облачный) с установленным Docker
-- Хотя бы один API-ключ провайдера LLM (OpenAI, Anthropic, Groq и др.) **или** локально запущенный экземпляр [InferCrate](https://github.com/hwdsl2/infercrate)
+- Хотя бы один API-ключ провайдера LLM (OpenAI, Anthropic, Groq и др.) **или** локально запущенный сервер Ollama, например [InferCrate](https://github.com/hwdsl2/infercrate)
 - Открытый TCP-порт 4000 (или настроенный вами порт)
 
 Запуск прокси возможен без ключей провайдеров LLM — сервер успешно стартует с пустым списком моделей. Модели можно добавить в любой момент с помощью `litellm_manage`.
@@ -137,11 +137,11 @@ docker image tag quay.io/hwdsl2/litellm-server hwdsl2/litellm-server
 | `LITELLM_GROQ_API_KEY` | API-ключ Groq — автодобавляет `llama-3.3-70b` | *(не задано)* |
 | `LITELLM_GEMINI_API_KEY` | API-ключ Google Gemini — автодобавляет `gemini-2.0-flash` | *(не задано)* |
 | `LITELLM_OLLAMA_BASE_URL` | Базовый URL Ollama — гарантирует наличие `ollama/llama3.2:3b` и `ollama-chat/llama3.2:3b` | *(не задано)* |
-| `LITELLM_OLLAMA_API_KEY` | API-ключ Ollama (автоматически считывается из общего тома в [self-hosted-ai-stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-ru.md)) | *(не задано)* |
+| `LITELLM_OLLAMA_API_KEY` | API-ключ конечной точки Ollama (автоматически считывается из общего тома в [self-hosted-ai-stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-ru.md)) | *(не задано)* |
 | `LITELLM_DATABASE_URL` | URL PostgreSQL — включает управление виртуальными ключами | *(не задано)* |
 | `LITELLM_POSTGRES_PASSWORD_FILE` | Файл с паролем PostgreSQL для Compose; используется только если `LITELLM_DATABASE_URL` не задан | *(не задано)* |
-| `LITELLM_MCP_URL` | URL конечной точки ToolUplink — автоподключение к ToolUplink при каждом запуске | *(не задано)* |
-| `LITELLM_MCP_API_KEY` | Bearer-токен для ToolUplink (обязателен при установке `LITELLM_MCP_URL`) | *(не задано)* |
+| `LITELLM_MCP_URL` | URL совместимой конечной точки MCP по HTTP (например, ToolUplink), автоматически подключаемой при каждом запуске | *(не задано)* |
+| `LITELLM_MCP_API_KEY` | Bearer-токен для конечной точки MCP (обязателен для конечных точек с аутентификацией, например ToolUplink) | *(не задано)* |
 | `LITELLM_DISABLE_USAGE_COUNTS` | Установите `1`, чтобы отключить анонимные агрегированные счётчики использования. | *(не задано)* |
 
 **Примечание:** В файле `env` можно заключать значения в одинарные кавычки, например `VAR='значение'`. Не добавляйте пробелы вокруг `=`. Если вы изменили `LITELLM_PORT`, обновите флаг `-p` в команде `docker run` соответствующим образом.
@@ -229,11 +229,11 @@ docker exec litellm litellm_manage --getkey
 
 ## Интеграция с ToolUplink
 
-Укажите `LITELLM_MCP_URL` (и при необходимости `LITELLM_MCP_API_KEY`) в файле `litellm.env`, чтобы автоматически подключить LiteLLM к ToolUplink — AI-клиенты смогут вызывать MCP-инструменты напрямую через прокси LiteLLM.
+Укажите `LITELLM_MCP_URL` в файле `litellm.env`, чтобы подключить GatewayCrate к совместимой конечной точке MCP по HTTP, например ToolUplink. Если конечная точка требует Bearer-аутентификацию, также укажите `LITELLM_MCP_API_KEY`. После этого AI-клиенты смогут вызывать MCP-инструменты через прокси LiteLLM.
 
 При наличии `LITELLM_MCP_URL` блок `mcp_servers:` автоматически добавляется в `config.yaml` при каждом запуске контейнера — ручное редактирование YAML не требуется.
 
-**Подключение к ToolUplink:**
+**Пример подключения к ToolUplink:**
 
 ```bash
 # В файле litellm.env:

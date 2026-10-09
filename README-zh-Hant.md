@@ -96,7 +96,7 @@ curl http://localhost:4000/v1/chat/completions \
 ## 系統需求
 
 - 已安裝 Docker 的 Linux 伺服器（本地端或雲端）
-- 至少一個 LLM 提供商 API 金鑰（OpenAI、Anthropic、Groq 等）**或** 本機執行的 [InferCrate](https://github.com/hwdsl2/infercrate) 實例
+- 至少一個 LLM 提供商 API 金鑰（OpenAI、Anthropic、Groq 等）**或** 本機執行的 Ollama 伺服器，例如 [InferCrate](https://github.com/hwdsl2/infercrate)
 - TCP 連接埠 4000（或您設定的連接埠）已開放
 
 不需要 LLM 提供商金鑰也可以啟動代理 — 伺服器可以在模型清單為空的情況下成功啟動。隨時可以使用 `litellm_manage` 新增模型。
@@ -137,11 +137,11 @@ docker image tag quay.io/hwdsl2/litellm-server hwdsl2/litellm-server
 | `LITELLM_GROQ_API_KEY` | Groq API 金鑰 — 自動新增 `llama-3.3-70b` | *(未設定)* |
 | `LITELLM_GEMINI_API_KEY` | Google Gemini API 金鑰 — 自動新增 `gemini-2.0-flash` | *(未設定)* |
 | `LITELLM_OLLAMA_BASE_URL` | Ollama 基礎 URL — 確保存在 `ollama/llama3.2:3b` 和 `ollama-chat/llama3.2:3b` | *(未設定)* |
-| `LITELLM_OLLAMA_API_KEY` | Ollama API 金鑰（在 [self-hosted-ai-stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-zh-Hant.md) 中透過共享卷自動讀取） | *(未設定)* |
+| `LITELLM_OLLAMA_API_KEY` | Ollama 端點的 API 金鑰（在 [self-hosted-ai-stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-zh-Hant.md) 中透過共享卷自動讀取） | *(未設定)* |
 | `LITELLM_DATABASE_URL` | PostgreSQL URL — 啟用虛擬金鑰管理 | *(未設定)* |
 | `LITELLM_POSTGRES_PASSWORD_FILE` | 包含 Compose PostgreSQL 密碼的檔案；僅在未設定 `LITELLM_DATABASE_URL` 時使用 | *(未設定)* |
-| `LITELLM_MCP_URL` | MCP 閘道端點 URL — 每次啟動時自動接入 MCP 閘道 | *(未設定)* |
-| `LITELLM_MCP_API_KEY` | MCP 閘道的 Bearer 權杖（設定 `LITELLM_MCP_URL` 時必填） | *(未設定)* |
+| `LITELLM_MCP_URL` | 相容的 MCP HTTP 端點 URL（例如 ToolUplink），每次啟動時自動接入 | *(未設定)* |
+| `LITELLM_MCP_API_KEY` | MCP 端點的 Bearer 權杖（ToolUplink 等啟用驗證的端點需要此項） | *(未設定)* |
 | `LITELLM_DISABLE_USAGE_COUNTS` | 設為 `1` 可停用匿名彙總使用計數。 | *（未設定）* |
 
 **注：** 在 `env` 檔案中，可以用單引號括住變數值，例如 `VAR='值'`。不要在 `=` 兩側新增空格。如果更改了 `LITELLM_PORT`，請相應更新 `docker run` 命令中的 `-p` 參數。
@@ -229,11 +229,11 @@ docker exec litellm litellm_manage --getkey
 
 ## ToolUplink 整合
 
-在 `litellm.env` 檔案中設定 `LITELLM_MCP_URL`（以及可選的 `LITELLM_MCP_API_KEY`），即可將 LiteLLM 自動接入 MCP 閘道，使 AI 用戶端能夠透過 LiteLLM 代理直接呼叫 MCP 工具。
+在 `litellm.env` 檔案中設定 `LITELLM_MCP_URL`，即可將 GatewayCrate 接入相容的 MCP HTTP 端點，例如 ToolUplink。如果端點要求 Bearer 驗證，還需設定 `LITELLM_MCP_API_KEY`。AI 用戶端隨後便可透過 LiteLLM 代理呼叫 MCP 工具。
 
 設定 `LITELLM_MCP_URL` 後，每次容器啟動時都會自動將 `mcp_servers:` 區塊注入 `config.yaml`，無需手動編輯 YAML 檔案。
 
-**接入 MCP 閘道：**
+**範例：接入 ToolUplink：**
 
 ```bash
 # 在 litellm.env 中：
