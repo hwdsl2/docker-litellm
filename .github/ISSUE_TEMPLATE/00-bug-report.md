@@ -51,7 +51,7 @@ Remove secrets, API keys, tokens and private URLs before posting.
 - Model management command output, if relevant:
 - Other management command output, if relevant (for example `docker exec litellm litellm_manage --showkey`):
 - Admin UI, virtual key, database, or master key behavior, if relevant:
-- ToolUplink integration details, if relevant:
+- UplinkCrate integration details, if relevant:
 - Request endpoint and sanitized request/response details:
 
 **Logs**

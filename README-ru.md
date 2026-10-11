@@ -26,7 +26,7 @@
 
 **Также доступно:**
 
-- Связанные AI-сервисы: [ScribeCrate](https://github.com/hwdsl2/scribecrate/blob/main/README-ru.md), [SpeakCrate](https://github.com/hwdsl2/speakcrate/blob/main/README-ru.md), [EmbedCrate](https://github.com/hwdsl2/embedcrate/blob/main/README-ru.md), [InferCrate](https://github.com/hwdsl2/infercrate/blob/main/README-ru.md), [ParseCrate](https://github.com/hwdsl2/parsecrate/blob/main/README-ru.md), [ToolUplink](https://github.com/hwdsl2/tooluplink/blob/main/README-ru.md)
+- Связанные AI-сервисы: [ScribeCrate](https://github.com/hwdsl2/scribecrate/blob/main/README-ru.md), [SpeakCrate](https://github.com/hwdsl2/speakcrate/blob/main/README-ru.md), [EmbedCrate](https://github.com/hwdsl2/embedcrate/blob/main/README-ru.md), [InferCrate](https://github.com/hwdsl2/infercrate/blob/main/README-ru.md), [ParseCrate](https://github.com/hwdsl2/parsecrate/blob/main/README-ru.md), [UplinkCrate](https://github.com/hwdsl2/uplinkcrate/blob/main/README-ru.md)
 
 ## Быстрый старт
 
@@ -140,8 +140,8 @@ docker image tag quay.io/hwdsl2/litellm-server hwdsl2/litellm-server
 | `LITELLM_OLLAMA_API_KEY` | API-ключ конечной точки Ollama (автоматически считывается из общего тома в [self-hosted-ai-stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-ru.md)) | *(не задано)* |
 | `LITELLM_DATABASE_URL` | URL PostgreSQL — включает управление виртуальными ключами | *(не задано)* |
 | `LITELLM_POSTGRES_PASSWORD_FILE` | Файл с паролем PostgreSQL для Compose; используется только если `LITELLM_DATABASE_URL` не задан | *(не задано)* |
-| `LITELLM_MCP_URL` | URL совместимой конечной точки MCP по HTTP (например, ToolUplink), автоматически подключаемой при каждом запуске | *(не задано)* |
-| `LITELLM_MCP_API_KEY` | Bearer-токен для конечной точки MCP (обязателен для конечных точек с аутентификацией, например ToolUplink) | *(не задано)* |
+| `LITELLM_MCP_URL` | URL совместимой конечной точки MCP по HTTP (например, UplinkCrate), автоматически подключаемой при каждом запуске | *(не задано)* |
+| `LITELLM_MCP_API_KEY` | Bearer-токен для конечной точки MCP (обязателен для конечных точек с аутентификацией, например UplinkCrate) | *(не задано)* |
 | `LITELLM_DISABLE_USAGE_COUNTS` | Установите `1`, чтобы отключить анонимные агрегированные счётчики использования. | *(не задано)* |
 
 **Примечание:** В файле `env` можно заключать значения в одинарные кавычки, например `VAR='значение'`. Не добавляйте пробелы вокруг `=`. Если вы изменили `LITELLM_PORT`, обновите флаг `-p` в команде `docker run` соответствующим образом.
@@ -227,13 +227,13 @@ docker exec litellm litellm_manage --showkey
 docker exec litellm litellm_manage --getkey
 ```
 
-## Интеграция с ToolUplink
+## Интеграция с UplinkCrate
 
-Укажите `LITELLM_MCP_URL` в файле `litellm.env`, чтобы подключить GatewayCrate к совместимой конечной точке MCP по HTTP, например ToolUplink. Если конечная точка требует Bearer-аутентификацию, также укажите `LITELLM_MCP_API_KEY`. После этого AI-клиенты смогут вызывать MCP-инструменты через прокси LiteLLM.
+Укажите `LITELLM_MCP_URL` в файле `litellm.env`, чтобы подключить GatewayCrate к совместимой конечной точке MCP по HTTP, например UplinkCrate. Если конечная точка требует Bearer-аутентификацию, также укажите `LITELLM_MCP_API_KEY`. После этого AI-клиенты смогут вызывать MCP-инструменты через прокси LiteLLM.
 
 При наличии `LITELLM_MCP_URL` блок `mcp_servers:` автоматически добавляется в `config.yaml` при каждом запуске контейнера — ручное редактирование YAML не требуется.
 
-**Пример подключения к ToolUplink:**
+**Пример подключения к UplinkCrate:**
 
 ```bash
 # В файле litellm.env:
@@ -482,7 +482,7 @@ docker rm -f litellm
 
 LiteLLM можно использовать как AI-шлюз в более широком self-hosted AI-стеке.
 
-Готовые полные и облегчённые стеки Docker Compose, примеры ручного запуска через `docker run`, а также примеры голосовых, RAG- и MCP-конвейеров с SpeakCrate, EmbedCrate, GatewayCrate, InferCrate, ParseCrate и ToolUplink см. в [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-ru.md).
+Готовые полные и облегчённые стеки Docker Compose, примеры ручного запуска через `docker run`, а также примеры голосовых, RAG- и MCP-конвейеров с SpeakCrate, EmbedCrate, GatewayCrate, InferCrate, ParseCrate и UplinkCrate см. в [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-ru.md).
 
 ## Счётчики использования
 

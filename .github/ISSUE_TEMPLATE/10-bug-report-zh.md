@@ -51,7 +51,7 @@ assignees: ''
 - 模型管理命令输出（如果相关）：
 - 其它相关管理命令输出（例如 `docker exec litellm litellm_manage --showkey`）：
 - 管理界面、虚拟 key、数据库或 master key 行为（如果相关）：
-- ToolUplink 集成细节（如果相关）：
+- UplinkCrate 集成细节（如果相关）：
 - 请求接口以及去除敏感信息后的请求/响应细节：
 
 **日志**

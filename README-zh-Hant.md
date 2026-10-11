@@ -26,7 +26,7 @@
 
 **另提供：**
 
-- 相關 AI 服務：[ScribeCrate](https://github.com/hwdsl2/scribecrate/blob/main/README-zh-Hant.md)、[SpeakCrate](https://github.com/hwdsl2/speakcrate/blob/main/README-zh-Hant.md)、[EmbedCrate](https://github.com/hwdsl2/embedcrate/blob/main/README-zh-Hant.md)、[InferCrate](https://github.com/hwdsl2/infercrate/blob/main/README-zh-Hant.md)、[ParseCrate](https://github.com/hwdsl2/parsecrate/blob/main/README-zh-Hant.md)、[ToolUplink](https://github.com/hwdsl2/tooluplink/blob/main/README-zh-Hant.md)
+- 相關 AI 服務：[ScribeCrate](https://github.com/hwdsl2/scribecrate/blob/main/README-zh-Hant.md)、[SpeakCrate](https://github.com/hwdsl2/speakcrate/blob/main/README-zh-Hant.md)、[EmbedCrate](https://github.com/hwdsl2/embedcrate/blob/main/README-zh-Hant.md)、[InferCrate](https://github.com/hwdsl2/infercrate/blob/main/README-zh-Hant.md)、[ParseCrate](https://github.com/hwdsl2/parsecrate/blob/main/README-zh-Hant.md)、[UplinkCrate](https://github.com/hwdsl2/uplinkcrate/blob/main/README-zh-Hant.md)
 
 ## 快速開始
 
@@ -140,8 +140,8 @@ docker image tag quay.io/hwdsl2/litellm-server hwdsl2/litellm-server
 | `LITELLM_OLLAMA_API_KEY` | Ollama 端點的 API 金鑰（在 [self-hosted-ai-stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-zh-Hant.md) 中透過共享卷自動讀取） | *(未設定)* |
 | `LITELLM_DATABASE_URL` | PostgreSQL URL — 啟用虛擬金鑰管理 | *(未設定)* |
 | `LITELLM_POSTGRES_PASSWORD_FILE` | 包含 Compose PostgreSQL 密碼的檔案；僅在未設定 `LITELLM_DATABASE_URL` 時使用 | *(未設定)* |
-| `LITELLM_MCP_URL` | 相容的 MCP HTTP 端點 URL（例如 ToolUplink），每次啟動時自動接入 | *(未設定)* |
-| `LITELLM_MCP_API_KEY` | MCP 端點的 Bearer 權杖（ToolUplink 等啟用驗證的端點需要此項） | *(未設定)* |
+| `LITELLM_MCP_URL` | 相容的 MCP HTTP 端點 URL（例如 UplinkCrate），每次啟動時自動接入 | *(未設定)* |
+| `LITELLM_MCP_API_KEY` | MCP 端點的 Bearer 權杖（UplinkCrate 等啟用驗證的端點需要此項） | *(未設定)* |
 | `LITELLM_DISABLE_USAGE_COUNTS` | 設為 `1` 可停用匿名彙總使用計數。 | *（未設定）* |
 
 **注：** 在 `env` 檔案中，可以用單引號括住變數值，例如 `VAR='值'`。不要在 `=` 兩側新增空格。如果更改了 `LITELLM_PORT`，請相應更新 `docker run` 命令中的 `-p` 參數。
@@ -227,13 +227,13 @@ docker exec litellm litellm_manage --showkey
 docker exec litellm litellm_manage --getkey
 ```
 
-## ToolUplink 整合
+## UplinkCrate 整合
 
-在 `litellm.env` 檔案中設定 `LITELLM_MCP_URL`，即可將 GatewayCrate 接入相容的 MCP HTTP 端點，例如 ToolUplink。如果端點要求 Bearer 驗證，還需設定 `LITELLM_MCP_API_KEY`。AI 用戶端隨後便可透過 LiteLLM 代理呼叫 MCP 工具。
+在 `litellm.env` 檔案中設定 `LITELLM_MCP_URL`，即可將 GatewayCrate 接入相容的 MCP HTTP 端點，例如 UplinkCrate。如果端點要求 Bearer 驗證，還需設定 `LITELLM_MCP_API_KEY`。AI 用戶端隨後便可透過 LiteLLM 代理呼叫 MCP 工具。
 
 設定 `LITELLM_MCP_URL` 後，每次容器啟動時都會自動將 `mcp_servers:` 區塊注入 `config.yaml`，無需手動編輯 YAML 檔案。
 
-**範例：接入 ToolUplink：**
+**範例：接入 UplinkCrate：**
 
 ```bash
 # 在 litellm.env 中：
@@ -482,7 +482,7 @@ docker rm -f litellm
 
 LiteLLM 可作為更廣泛的自託管 AI 設定中的 AI 閘道。
 
-如需完整和輕量級 Docker Compose 技術堆疊、手動 `docker run` 範例，以及結合 SpeakCrate、EmbedCrate、GatewayCrate、InferCrate、ParseCrate 和 ToolUplink 的語音/RAG/MCP 流水線範例，請參閱 [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-zh-Hant.md)。
+如需完整和輕量級 Docker Compose 技術堆疊、手動 `docker run` 範例，以及結合 SpeakCrate、EmbedCrate、GatewayCrate、InferCrate、ParseCrate 和 UplinkCrate 的語音/RAG/MCP 流水線範例，請參閱 [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-zh-Hant.md)。
 
 ## 使用計數
 

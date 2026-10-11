@@ -26,7 +26,7 @@ Also available as part of the [Self-Hosted AI Stack](https://github.com/hwdsl2/s
 
 **Also available:**
 
-- Related AI services: [ScribeCrate](https://github.com/hwdsl2/scribecrate), [SpeakCrate](https://github.com/hwdsl2/speakcrate), [EmbedCrate](https://github.com/hwdsl2/embedcrate), [InferCrate](https://github.com/hwdsl2/infercrate), [ParseCrate](https://github.com/hwdsl2/parsecrate), [ToolUplink](https://github.com/hwdsl2/tooluplink)
+- Related AI services: [ScribeCrate](https://github.com/hwdsl2/scribecrate), [SpeakCrate](https://github.com/hwdsl2/speakcrate), [EmbedCrate](https://github.com/hwdsl2/embedcrate), [InferCrate](https://github.com/hwdsl2/infercrate), [ParseCrate](https://github.com/hwdsl2/parsecrate), [UplinkCrate](https://github.com/hwdsl2/uplinkcrate)
 
 ## Quick start
 
@@ -142,8 +142,8 @@ This Docker image uses the following variables, that can be declared in an `env`
 | `LITELLM_OLLAMA_API_KEY` | API key for the Ollama endpoint (auto-read from shared volume in [self-hosted-ai-stack](https://github.com/hwdsl2/self-hosted-ai-stack)) | *(not set)* |
 | `LITELLM_DATABASE_URL` | PostgreSQL URL — enables virtual key management | *(not set)* |
 | `LITELLM_POSTGRES_PASSWORD_FILE` | File containing the Compose Postgres password; used only when `LITELLM_DATABASE_URL` is not set | *(not set)* |
-| `LITELLM_MCP_URL` | Compatible MCP HTTP endpoint URL (for example, ToolUplink), registered on every start | *(not set)* |
-| `LITELLM_MCP_API_KEY` | Bearer token for the MCP endpoint (required for authenticated endpoints such as ToolUplink) | *(not set)* |
+| `LITELLM_MCP_URL` | Compatible MCP HTTP endpoint URL (for example, UplinkCrate), registered on every start | *(not set)* |
+| `LITELLM_MCP_API_KEY` | Bearer token for the MCP endpoint (required for authenticated endpoints such as UplinkCrate) | *(not set)* |
 | `LITELLM_DISABLE_USAGE_COUNTS` | Set to `1` to disable anonymous aggregate usage counts. | *(not set)* |
 
 **Note:** In your `env` file, you may enclose values in single quotes, e.g. `VAR='value'`. Do not add spaces around `=`. If you change `LITELLM_PORT`, update the `-p` flag in the `docker run` command accordingly.
@@ -229,13 +229,13 @@ docker exec litellm litellm_manage --showkey
 docker exec litellm litellm_manage --getkey
 ```
 
-## ToolUplink integration
+## UplinkCrate integration
 
-Set `LITELLM_MCP_URL` in your `litellm.env` file to connect GatewayCrate to a compatible MCP HTTP endpoint, such as ToolUplink. Set `LITELLM_MCP_API_KEY` if the endpoint requires Bearer authentication. AI clients can then call MCP tools through the LiteLLM proxy.
+Set `LITELLM_MCP_URL` in your `litellm.env` file to connect GatewayCrate to a compatible MCP HTTP endpoint, such as UplinkCrate. Set `LITELLM_MCP_API_KEY` if the endpoint requires Bearer authentication. AI clients can then call MCP tools through the LiteLLM proxy.
 
 When `LITELLM_MCP_URL` is set, an `mcp_servers:` block is injected into `config.yaml` on every container start — no manual YAML editing required.
 
-**Example: connect to ToolUplink:**
+**Example: connect to UplinkCrate:**
 
 ```bash
 # In litellm.env:
@@ -486,7 +486,7 @@ Your data is preserved in the `litellm-data` volume.
 
 LiteLLM can be used as the AI gateway in a broader self-hosted AI setup.
 
-For full and lightweight Docker Compose stacks, manual `docker run` examples, and voice/RAG/MCP pipeline examples with SpeakCrate, EmbedCrate, GatewayCrate, InferCrate, ParseCrate, and ToolUplink, see [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack).
+For full and lightweight Docker Compose stacks, manual `docker run` examples, and voice/RAG/MCP pipeline examples with SpeakCrate, EmbedCrate, GatewayCrate, InferCrate, ParseCrate, and UplinkCrate, see [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack).
 
 ## Usage counts
 
